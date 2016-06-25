@@ -1,0 +1,1 @@
+autocmd BufNewFile,BufRead *.{c,C,cpp,cxx,cc,h,hpp} set equalprg=astyle\ -s2\ --style=gnu
