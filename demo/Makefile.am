@@ -1,7 +1,7 @@
 if DEBUG
-  AM_CFLAGS =-I$(top_srcdir)/demo -I$(top_srcdir)/src/lib -Wall -g -O3
+  AM_CFLAGS =-I$(top_srcdir)/demo -I$(top_srcdir)/src/lib/dx -I$(top_srcdir)/src/lib/dx-video -Wall -g -O3
 else
-  AM_CFLAGS =-I$(top_srcdir)/demo -I$(top_srcdir)/src/lib -Wall -O3
+  AM_CFLAGS =-I$(top_srcdir)/demo -I$(top_srcdir)/src/lib/dx -I$(top_srcdir)/src/lib/dx-video -Wall -O3
 endif
 
 THREAD_CFLAGS = -pthread
@@ -44,7 +44,7 @@ dx_demo_SOURCES = main.c \
                   server_handler_command_playback.c \
                   client_handler_command.c
 
-dx_demo_LDADD = $(top_builddir)/src/lib/libdx.a $(AM_LDFLAGS)
+dx_demo_LDADD = $(top_builddir)/src/lib/dx/libdx.a $(AM_LDFLAGS)
 dx_demo_LDADD += $(THREAD_LIBS)
 dx_demo_LDADD += $(GLIB_LIBS)
 dx_demo_LDADD += $(SQLITE3_LIBS)

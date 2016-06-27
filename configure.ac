@@ -56,7 +56,9 @@ AM_COND_IF(DEBUG,
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile
-                 src/lib/Makefile
+                 src/lib/dx-core/Makefile
+                 src/lib/dx/Makefile
+                 src/lib/dx-video/Makefile
                  src/bin/Makefile
                  demo/Makefile])
 AC_OUTPUT
