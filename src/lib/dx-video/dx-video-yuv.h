@@ -60,14 +60,14 @@ typedef struct dx_video_yuv {
 	int buffer_allocated_by_self;
 	int buffer_size;
 	uint8_t* buffer;
-	uint8_t* plane[4];
+	uint8_t* plane[3];
 } dx_video_yuv_t;
 
 /*
  * API Functions.
  */
 
-dx_video_yuv_t* dx_video_yuv_create();
+dx_video_yuv_t* dx_video_yuv_create(int type, int width, int height);
 int dx_video_yuv_destroy(dx_video_yuv_t* yuv);
 
 int dx_video_yuv_alloc_buffer(dx_video_yuv_t* yuv, uint8_t* buffer, int size);

@@ -15,4 +15,6 @@ noinst_HEADERS = dx-video.h
 libdx_video_a_SOURCES = $(libdx_video_a_HEADERS) \
                         dx-video.c \
                         dx-video-yuv.c \
-                        dx-video-yuv-convert.c
+                        dx-video-yuv-convert.c \
+                        dx-video-v4l2.c \
+                        dx-video-v4l2-query.c 

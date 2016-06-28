@@ -36,7 +36,8 @@ noinst_HEADERS = dx.h \
                  dx_event_mplexer.h \
                  dx_net_dgram.h \
                  dx_net_packet_io.h \
-                 dx_util_list.h 
+                 dx_util_list.h \
+                 dx_util_ioctl.h
 
 # The files to add to the library and to the source distribution
 libdx_a_SOURCES = $(libdx_a_HEADERS) \
@@ -65,4 +66,5 @@ libdx_a_SOURCES = $(libdx_a_HEADERS) \
                   dx_event_pipe.c \
                   dx_net_discovery.c \
                   dx_net_server.c \
-                  dx_util_log.c
+                  dx_util_log.c \
+                  dx_util_ioctl.c

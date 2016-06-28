@@ -18,6 +18,7 @@ noinst_HEADERS = dx_debug_assert.h \
                  dx_util_list.h \
                  dx_util_clock.h \
                  dx_util_file.h \
+                 dx_util_ioctl.h \
                  dx_event_control.h \
                  dx_event_mplexer.h \
                  dx_event_pipe.h \
@@ -34,6 +35,7 @@ libdx_core_a_SOURCES = $(noinst_HEADERS) \
                   dx_util_list.c \
                   dx_util_lock.c \
                   dx_util_log.c \
+                  dx_util_ioctl.c \
                   dx_event_control.c \
                   dx_event_mplexer.c \
                   dx_event_pipe.c \

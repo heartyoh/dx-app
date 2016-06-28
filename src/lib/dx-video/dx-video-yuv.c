@@ -98,7 +98,8 @@ int dx_video_yuv_alloc_buffer(dx_video_yuv_t* yuv, uint8_t* buffer, int size) {
 int dx_video_yuv_fill_plane(dx_video_yuv_t* yuv, int plane_idx, uint8_t value) {
 	uint8_t* p = yuv->plane[plane_idx];
 	int size = (plane_idx == 0) ? yuv->luma_size : yuv->chroma_size;
-	int stride = (plane_idx == 0) ? yuv->spec->stride_y : (plane_idx == 1 ? yuv->spec->stride_u : yuv->spec->stride_v); 
+	int stride = (plane_idx == 0) ? yuv->spec->stride_y 
+		: (plane_idx == 1 ? yuv->spec->stride_u : yuv->spec->stride_v); 
 
 	for(int i = 0;i < size;i++) {
 		*p = value;

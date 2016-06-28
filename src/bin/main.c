@@ -1,10 +1,18 @@
 #include "stdio.h"
 
+#include "dx-core.h"
 #include "dx-video.h"
 
 extern dx_video_yuv_spec_t YUV_SPEC[];
 
 int main() {
+	/* open v4l2 device */
+//	dx_video_v4l2_open();
+//	dx_video_v4l2_query();
+//	dx_video_v4l2_close();
+
+
+
 	dx_video_yuv_t* yuyv;
 	dx_video_yuv_t* nv12;
 

@@ -10,33 +10,23 @@
 // PARTICULAR PURPOSE.
 //
 
-#ifndef __DX_CORE_H
-#define __DX_CORE_H
+#ifndef __DX_NET_PACKET_IO_H
+#define __DX_NET_PACKET_IO_H
 
-#include "dx_debug_assert.h"
-#include "dx_debug_malloc.h"
-#include "dx_util_lock.h"
-#include "dx_util_log.h"
-#include "dx_util_buffer.h"
-#include "dx_util_schedule.h"
-#include "dx_util_list.h" 
-#include "dx_util_clock.h"
-#include "dx_util_file.h"
-#include "dx_util_ioctl.h"
-#include "dx_event_control.h"
 #include "dx_event_mplexer.h"
-#include "dx_event_pipe.h"
-#include "dx_console.h" 
+#include "dx_net_packet.h"
 
 /*
  * Definitions
- *
- *
  */
 
-#define DX_DEBUG
-//#define DX_MALLOC_DEBUG
-#define DX_MULTITHREADED
+/* APIs */
 
+int dx_write(int fd, void* buf, ssize_t sz, int discardable);
 
-#endif // __DX_CORE_H
+int dx_read_with_block_mode(int fd, void* buf, ssize_t sz);
+int dx_write_by_poller(dx_event_context_t* pcontext);
+int dx_receive_packet(dx_event_context_t* pcontext, dx_packet_t** ppacket);
+int dx_receive_dgram(dx_event_context_t* pcontext, dx_packet_t** ppacket, struct sockaddr_in* peer_addr);
+
+#endif /* DX_NET_PACKET_IO_H */

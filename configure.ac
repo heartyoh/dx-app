@@ -57,7 +57,8 @@ AM_COND_IF(DEBUG,
 
 AC_CONFIG_FILES([Makefile
                  src/lib/dx-core/Makefile
-                 src/lib/dx/Makefile
+                 src/lib/dx-net/Makefile
+                 src/lib/dx-parser/Makefile
                  src/lib/dx-video/Makefile
                  src/bin/Makefile
                  demo/Makefile])

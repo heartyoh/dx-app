@@ -1,6 +1,7 @@
 #include "demo.h"
 
-dx_camera_context_t* demo_camera_context = NULL;
+//dx_camera_context_t* demo_camera_context = NULL;
+int camera_fd = -1;
 
 void demo_camera_open(char* cmdline) {
 
@@ -11,28 +12,28 @@ void demo_camera_open(char* cmdline) {
 		return;
 	}
 
-	if(demo_camera_context != NULL) {
-		dx_camera_context_destroy(demo_camera_context);
-		demo_camera_context = NULL;
+	if(camera_fd != -1) {
+		dx_video_v4l2_close(camera_fd);
+		camera_fd = -1;
 	}
 
-	demo_camera_context = dx_camera_context_create(path);
+	dx_video_v4l2_open(path, &camera_fd);
 
-	if(demo_camera_context == NULL) {
+	if(camera_fd == -1) {
 		ERROR("Camera Device 오픈에 실패하였습니다.");
 		return;
 	}
 }
 
 void demo_camera_close(char* cmdline) {
-	if(demo_camera_context != NULL) {
-		dx_camera_context_destroy(demo_camera_context);
-		demo_camera_context = NULL;
+	if(camera_fd != -1) {
+		dx_video_v4l2_close(camera_fd);
+		camera_fd = -1;
 	}
 }
 
 int demo_camera_check_open() {
-	if(demo_camera_context == NULL) {
+	if(camera_fd == -1) {
 		ERROR("Camera Open Please.");
 		return 1;
 	}
@@ -44,15 +45,22 @@ void demo_camera_info(char* cmdline) {
 	if(demo_camera_check_open())
 		return;
 
-	dx_v4l2_print_caps(demo_camera_context->fd);
+	dx_video_v4l2_query(camera_fd);
 }
 
 void demo_camera_capture(char* cmdline) {
 	if(demo_camera_check_open())
 		return;
 
-	if(dx_v4l2_init_mmap(demo_camera_context->fd, &demo_camera_context->buffer))
+	dx_video_yuv_t* yuv = dx_video_yuv_create(DX_YUV_TYPE_YUYV, 640, 480);
+
+	uint8_t* buffer;
+	int size;
+
+	if(dx_video_v4l2_init_mmap(camera_fd, &buffer, &size))
 		return;
 
-	dx_v4l2_capture_image(demo_camera_context->fd, demo_camera_context->buffer);
+	dx_video_yuv_alloc_buffer(yuv, buffer, size);
+
+	dx_video_v4l2_capture_image(camera_fd, yuv->buffer);
 }
