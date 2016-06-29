@@ -16,8 +16,9 @@
 int dx_ioctl(int fd, int request, void *arg) {
 	int r;
 
-    do r = ioctl(fd, request, arg);
-    while (-1 == r && EINTR == errno);
+    do {
+		r = ioctl(fd, request, arg);
+	} while (-1 == r && EINTR == errno);
 
     return r;
 }

@@ -17,7 +17,6 @@
 #include <time.h> 	// For time_t
 
 #include "dx_file_movie.h"
-
 #include "dx_net_packet.h"
 
 /*

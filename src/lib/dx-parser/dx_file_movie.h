@@ -13,7 +13,7 @@
 #ifndef __DX_FILE_MOVIE_H
 #define __DX_FILE_MOVIE_H
 
-#include "dx_net_packet_file.h"
+#include "dx-net.h"
 
 typedef struct dx_movie_context dx_movie_context_t;
 typedef struct dx_movie_track_info dx_movie_track_info_t;

@@ -23,14 +23,10 @@
 #include <dirent.h>   // For DIR, opendir, ...
 #include <errno.h>    // For errno
 
-#include "dx.h"
-
-#include "dx_debug_assert.h"
-#include "dx_debug_malloc.h"
-
-#include "dx_util_log.h"
+#include "dx-core.h"
 
 #include "dx_net_packet_io.h"
+#include "dx_net_packet_file.h"
 
 /* Internal Functions */
 char* __dx_scan_dir_path = NULL;
@@ -193,7 +189,7 @@ int dx_packet_send_file(int fd, char* path, uint32_t begin, uint32_t end) {
     end = end > (total_len - 1) ? total_len - 1 : end;
     partial_len = end - begin + 1;
 
-    nread = 0, n;
+    nread = 0;
     data = MALLOC(partial_len);
     /* TODO Memory Allocation 없앨 것. 직접 패킷에서 읽을 것. */
 

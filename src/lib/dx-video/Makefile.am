@@ -1,7 +1,9 @@
+AM_CFLAGS = -I$(top_srcdir)/src/lib/dx-core
+
 if DEBUG
-  AM_CFLAGS =-I$(top_srcdir)/src/lib/dx-core -Wall -g -O3
+  AM_CFLAGS += -Wall -g -O3
 else
-  AM_CFLAGS =-I$(top_srcdir)/src/lib/dx-core -Wall
+  AM_CFLAGS += -Wall -O3
 endif
 
 AM_CFLAGS += $(GLIB_CFLAGS)
@@ -17,4 +19,7 @@ libdx_video_a_SOURCES = $(libdx_video_a_HEADERS) \
                         dx-video-yuv.c \
                         dx-video-yuv-convert.c \
                         dx-video-v4l2.c \
-                        dx-video-v4l2-query.c 
+                        dx-video-v4l2-query.c
+
+libdx_video_a_LIBADD = $(top_builddir)/src/lib/dx-core/libdx-core.a
+libdx_video_a_LIBADD += $(AM_LDFLAGS)

@@ -17,7 +17,7 @@
 
 #include "dx_event_mplexer.h"
 
-#include "dx_net.h"
+#include "dx_net_common.h"
 #include "dx_net_packet.h"
 
 /*

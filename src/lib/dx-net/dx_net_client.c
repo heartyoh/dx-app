@@ -20,15 +20,8 @@
 #include <errno.h>      // For errno
 #include <sys/epoll.h>    // For EPOLLIN
 
-#include "dx.h"
+#include "dx-core.h"
 
-#include "dx_debug_assert.h"
-#include "dx_debug_malloc.h"
-
-#include "dx_util_log.h"
-#include "dx_util_buffer.h"
-
-#include "dx_event_mplexer.h"
 #include "dx_net_packet_io.h"
 #include "dx_net_client.h"
 

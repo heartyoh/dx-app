@@ -25,12 +25,7 @@
 #include <dx_net_packet_movie_playback.h>
 #include <errno.h>    // For errno
 
-#include "dx.h"
-
-#include "dx_debug_assert.h"
-#include "dx_debug_malloc.h"
-
-#include "dx_util_log.h"
+#include "dx-core.h"
 
 #include "dx_file_movie.h"
 #include "dx_file_avi.h"

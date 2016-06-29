@@ -66,7 +66,7 @@ int dx_video_v4l2_init_mmap(int fd, uint8_t** buffer, int* size) {
     req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     req.memory = V4L2_MEMORY_MMAP;
 
-    if (-1 == IOCTL(fd, VIDIOC_REQBUFS, &req)) {
+    if (-1 == dx_ioctl(fd, VIDIOC_REQBUFS, &req)) {
         ERROR("Requesting Buffer");
         return 1;
     }
@@ -75,7 +75,7 @@ int dx_video_v4l2_init_mmap(int fd, uint8_t** buffer, int* size) {
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf.memory = V4L2_MEMORY_MMAP;
     buf.index = 0;
-    if(-1 == IOCTL(fd, VIDIOC_QUERYBUF, &buf)) {
+    if(-1 == dx_ioctl(fd, VIDIOC_QUERYBUF, &buf)) {
         ERROR("Querying Buffer");
         return 1;
     }
@@ -94,12 +94,12 @@ int dx_video_v4l2_capture_image(int fd, uint8_t* buffer) {
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf.memory = V4L2_MEMORY_MMAP;
     buf.index = 0;
-    if(-1 == IOCTL(fd, VIDIOC_QBUF, &buf)) {
+    if(-1 == dx_ioctl(fd, VIDIOC_QBUF, &buf)) {
         ERROR("Query Buffer");
         return 1;
     }
 
-    if(-1 == IOCTL(fd, VIDIOC_STREAMON, &buf.type)) {
+    if(-1 == dx_ioctl(fd, VIDIOC_STREAMON, &buf.type)) {
     	ERROR("Start Capture Error %d, %s", errno, strerror(errno));
     	if(errno == EIO)
     		ERROR("You may run this program on virtual machine.")
@@ -117,12 +117,12 @@ int dx_video_v4l2_capture_image(int fd, uint8_t* buffer) {
         return 1;
     }
 
-    if(-1 == IOCTL(fd, VIDIOC_DQBUF, &buf)) {
+    if(-1 == dx_ioctl(fd, VIDIOC_DQBUF, &buf)) {
     	ERROR("Retrieving Frame");
         return 1;
     }
 
-    int outfd = open("out.img", O_CREAT | O_WRONLY);
+    int outfd = open("out.img", O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     if(outfd < 0) {
     	ERROR("File open error : %d, %s", errno, strerror(errno));
     	return 1;

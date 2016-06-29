@@ -4,12 +4,10 @@ else
   AM_CFLAGS =-I$(top_srcdir)/src/lib/dx-core -Wall
 endif
 
-AM_CFLAGS += $(GLIB_CFLAGS)
-AM_CFLAGS += $(SQLITE3_CFLAGS)
-
 # The libraries to build
 noinst_LIBRARIES = libdx-core.a
-noinst_HEADERS = dx_debug_assert.h \
+noinst_HEADERS = dx-core.h \
+                 dx_debug_assert.h \
                  dx_debug_malloc.h \
                  dx_util_lock.h \
                  dx_util_log.h \
@@ -22,8 +20,7 @@ noinst_HEADERS = dx_debug_assert.h \
                  dx_event_control.h \
                  dx_event_mplexer.h \
                  dx_event_pipe.h \
-                 dx_console.h \
-                 dx-core.h
+                 dx_console.h
 
 # The files to add to the library and to the source distribution
 libdx_core_a_SOURCES = $(noinst_HEADERS) \

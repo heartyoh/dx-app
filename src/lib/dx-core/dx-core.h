@@ -13,6 +13,10 @@
 #ifndef __DX_CORE_H
 #define __DX_CORE_H
 
+//#define DX_DEBUG
+//#define DX_MALLOC_DEBUG
+//#define DX_MULTITHREADED
+
 #include "dx_debug_assert.h"
 #include "dx_debug_malloc.h"
 #include "dx_util_lock.h"
@@ -27,16 +31,5 @@
 #include "dx_event_mplexer.h"
 #include "dx_event_pipe.h"
 #include "dx_console.h" 
-
-/*
- * Definitions
- *
- *
- */
-
-#define DX_DEBUG
-//#define DX_MALLOC_DEBUG
-#define DX_MULTITHREADED
-
 
 #endif // __DX_CORE_H

@@ -21,9 +21,8 @@
 #include <fcntl.h>      // For fcntl
 #include <sys/epoll.h>    // For EPOLLIN
 
-#include "dx.h"
+#include "dx-core.h"
 
-#include "dx_debug_assert.h"
 #include "dx_net_packet_io.h"
 
 int dx_dgram_readable_handler(dx_event_context_t* context);

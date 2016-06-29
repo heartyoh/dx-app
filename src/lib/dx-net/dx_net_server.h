@@ -15,7 +15,7 @@
 
 #include <netinet/in.h>   // For uint16_t
 
-#include "dx_net.h"
+#include "dx_net_common.h"
 #include "dx_net_packet.h"
 
 /*

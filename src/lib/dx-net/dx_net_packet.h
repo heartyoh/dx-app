@@ -17,6 +17,8 @@
 #include <time.h>	// For time_t
 #include <unistd.h>	// For ssize_t
 
+#include "dx_net_common.h"
+
 /*
  * Definitions
  */

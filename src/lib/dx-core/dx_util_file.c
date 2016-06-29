@@ -24,14 +24,14 @@
 
 char dx_filepath_buffer[PATH_MAX];
 
+int dx_file_is_closed(int fd) {
+	return fcntl(fd, F_GETFL) < 0 && errno == EBADF;
+}
+
 char* dx_file_get_path(int fd) {
 
 	if(fcntl(fd, F_GETPATH, dx_filepath_buffer) != -1)
 		return dx_filepath_buffer;
 
 	return NULL;
-}
-
-int dx_file_is_closed(int fd) {
-	return fcntl(fd, F_GETFL) < 0 && errno == EBADF;
 }

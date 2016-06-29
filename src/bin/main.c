@@ -11,6 +11,8 @@ int main() {
 //	dx_video_v4l2_query();
 //	dx_video_v4l2_close();
 
+	int fd;
+	dx_video_v4l2_open("/dev/video0", &fd);
 
 
 	dx_video_yuv_t* yuyv;

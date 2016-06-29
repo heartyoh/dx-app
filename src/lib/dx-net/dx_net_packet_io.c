@@ -15,22 +15,16 @@
 #include <fcntl.h>		// For read, write
 #include <string.h>		// For memset
 #include <sys/epoll.h>	// For EPOLLIN, EPOLLOUT
+#include <errno.h>
 
-#include "dx.h"
-
-#include "dx_debug_assert.h"
-#include "dx_debug_malloc.h"
-
-#include "dx_util_buffer.h"
-#include "dx_util_file.h"
-#include "dx_util_log.h"
-
-#include "dx_event_mplexer.h"
+#include "dx-core.h"
 
 #include "dx_net_packet.h"  // For DX_PACKET_HEADER_SIZE
 #include "dx_net_packet_io.h"
 
 #include "dx_net_dgram.h" // For DX_DGRAM_MAX_PACKET_SIZE
+
+#define CHECK_FILE_CLOSED(fd) (fcntl(fd, F_GETFL) < 0 && errno == EBADF)
 
 int dx_write_by_poller(dx_event_context_t* pcontext) {
 	dx_list_t* plist = pcontext->plist_writing;
@@ -112,7 +106,7 @@ int dx_write(int fd, void* buf, ssize_t sz, int discardable) {
 	plist = pcontext->plist_writing;
 
 	if (plist == NULL) {
-		if(dx_file_is_closed(fd)) {
+		if(CHECK_FILE_CLOSED(fd)) {
 			FREE(buf);
 			return -1;
 		}

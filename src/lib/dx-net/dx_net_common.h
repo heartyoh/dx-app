@@ -10,22 +10,14 @@
 // PARTICULAR PURPOSE.
 //
 
-#ifndef __DX_H
-#define __DX_H
+#ifndef __DX_NET_COMMON_H
+#define __DX_NET_COMMON_H
 
-#include <stdint.h>
-
-#include "dx_net_packet.h"
+#include <netinet/in.h>   // For uint16_t
 
 /*
  * Definitions
- *
- *
  */
-
-#define DX_DEBUG
-//#define DX_MALLOC_DEBUG
-#define DX_MULTITHREADED
 
 /* Discovery Code */
 #define DX_DISCOVERY_BASE       0x00
@@ -43,8 +35,8 @@
 /* Event Types */
 
 #define DX_EVT_BASE                     0x00
-#define DX_EVT_CONNECT                  (DX_EVT_BASE + 0)   /* 옴니드라이브가 연결되었을 때 발생 */
-#define DX_EVT_DISCONNECT               (DX_EVT_BASE + 1)   /* 옴니드라이브 연결이 끊겼을 때 발생 */
+#define DX_EVT_CONNECT                  (DX_EVT_BASE + 0)   /* 연결되었을 때 발생 */
+#define DX_EVT_DISCONNECT               (DX_EVT_BASE + 1)   /* 연결이 끊겼을 때 발생 */
 
 /* Alarm Code */
 
@@ -81,7 +73,13 @@
 #define DX_MOVIE_COMMAND_PAUSE			(DX_MOVIE_BASE + 5)
 #define DX_MOVIE_FRAME					(DX_MOVIE_BASE + 6)
 
-/* API */
+/* NET */
 
+#define DX_DEFAULT_SERVICE_PORT 2015
+#define DX_SOCKET_BUF_SIZE  (8192 * 4)
+#define DX_DGRAM_BUF_SIZE  (8192 * 4)
 
-#endif /* DX_H */
+#define ntohll(x) (((uint64_t)(ntohl((uint32_t)((x<<32)>>32))) << 32) | ntohl( ((uint32_t)(x >> 32))))
+#define htonll(x) ntohll(x)
+
+#endif /* __DX_NET_COMMON_H */

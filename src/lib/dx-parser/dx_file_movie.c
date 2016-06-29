@@ -18,17 +18,10 @@
 #include <string.h>
 #include <arpa/inet.h>
 
-#include "dx.h"
-
-#include "dx_debug_assert.h"
-#include "dx_debug_malloc.h"
-
-#include "dx_util_log.h"
+#include "dx-core.h"
 
 #include "dx_file_movie.h"
 #include "dx_file_avi.h"
-
-#include "dx_net_packet_file.h"
 
 dx_movie_context_t* dx_movie_context_create(char* path) {
 

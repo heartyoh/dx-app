@@ -21,15 +21,9 @@
 #include <stdint.h>   // For uint32_t, ...
 #include <sys/stat.h> // For stat
 #include <dirent.h>   // For DIR, opendir, ...
-#include <dx_net_packet_movie_playback.h>
 #include <errno.h>    // For errno
 
-#include "dx.h"
-
-#include "dx_debug_assert.h"
-#include "dx_debug_malloc.h"
-
-#include "dx_file_movie.h"
+#include "dx-core.h"
 
 #include "dx_net_packet.h"
 #include "dx_net_packet_io.h"

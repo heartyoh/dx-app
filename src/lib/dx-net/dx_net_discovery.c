@@ -18,21 +18,14 @@
 #include <sys/epoll.h>    // For epoll
 #include <arpa/inet.h>    // For inet_ntoa
 
-#include "dx.h"
-
-#include "dx_net_discovery.h"
-#include "dx_event_mplexer.h"
+#include "dx-core.h"
 
 #include "dx_net_client.h"
 #include "dx_net_server.h"
 #include "dx_net_packet.h"
 #include "dx_net_packet_file.h"
 #include "dx_net_dgram.h"
-
-#include "dx_debug_assert.h"
-#include "dx_debug_malloc.h"
-
-#include "dx_util_log.h"
+#include "dx_net_discovery.h"
 
 #define DISCOVERY_BUFFER_LENGTH DX_PRIMITIVE_PACKET_SIZE
 
