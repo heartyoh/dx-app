@@ -8,8 +8,8 @@ void demo_camera_open(char* cmdline) {
 	char* path = NULL;
 
 	if(cmdline == NULL || (path = strtok(cmdline, " \t\n\f")) == NULL) {
-		ERROR("오픈하고자 하는 Camera Device 이름을 입력해주세요.");
-		return;
+		path = "/dev/video0";
+		CONSOLE("/dev/video0 장치를 오픈합니다.\n");
 	}
 
 	if(camera_fd != -1) {
