@@ -31,10 +31,29 @@
 #include "dx-core.h"
 #include "dx-video-v4l2-query.h"
 
-int dx_video_v4l2_query(int fd) {
+int dx_video_v4l2_enum_fmt(int dev) {
+	struct v4l2_fmtdesc fmtdesc = {0};
+
+	fmtdesc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	char fourcc[5] = {0};
+	char c, e;
+
+	CONSOLE("  FMT : CE Desc\n--------------------\n");
+	while (0 == IOCTL(dev, VIDIOC_ENUM_FMT, &fmtdesc)) {
+		strncpy(fourcc, (char *)&fmtdesc.pixelformat, 4);
+		c = fmtdesc.flags & 1? 'C' : ' '; // C means COMPRESSED
+		e = fmtdesc.flags & 2? 'E' : ' '; // E means EMULATED
+		CONSOLE("  %s: %c%c %s\n", fourcc, c, e, fmtdesc.description);
+		fmtdesc.index++;
+	}
+
+	return 0;
+}
+
+int dx_video_v4l2_query_cap(int dev) {
 
 	struct v4l2_capability caps = {};
-	if (-1 == IOCTL(fd, VIDIOC_QUERYCAP, &caps)) {
+	if (-1 == IOCTL(dev, VIDIOC_QUERYCAP, &caps)) {
 		ERROR("Querying Capabilities");
 		return 1;
 	}
@@ -55,7 +74,7 @@ int dx_video_v4l2_query(int fd) {
 
 	struct v4l2_cropcap cropcap = {0};
 	cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-	if (-1 == IOCTL (fd, VIDIOC_CROPCAP, &cropcap)) {
+	if (-1 == IOCTL (dev, VIDIOC_CROPCAP, &cropcap)) {
 		ERROR("Querying Cropping Capabilities");
 		return 1;
 	}
@@ -68,50 +87,28 @@ int dx_video_v4l2_query(int fd) {
 			cropcap.defrect.width, cropcap.defrect.height, cropcap.defrect.left, cropcap.defrect.top,
 			cropcap.pixelaspect.numerator, cropcap.pixelaspect.denominator);
 
-	int support_grbg10 = 0;
-
-	struct v4l2_fmtdesc fmtdesc = {0};
-	fmtdesc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-	char fourcc[5] = {0};
-	char c, e;
-	CONSOLE("  FMT : CE Desc\n--------------------\n");
-	while (0 == IOCTL(fd, VIDIOC_ENUM_FMT, &fmtdesc)) {
-		strncpy(fourcc, (char *)&fmtdesc.pixelformat, 4);
-		if (fmtdesc.pixelformat == V4L2_PIX_FMT_SGRBG10)
-			support_grbg10 = 1;
-		c = fmtdesc.flags & 1? 'C' : ' ';
-		e = fmtdesc.flags & 2? 'E' : ' ';
-		CONSOLE("  %s: %c%c %s\n", fourcc, c, e, fmtdesc.description);
-		fmtdesc.index++;
-	}
-
-	if (!support_grbg10) {
-		CONSOLE("Doesn't support GRBG10.\n");
-		return 1;
-	}
-
-	struct v4l2_format fmt = {0};
-	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-	fmt.fmt.pix.width = 752;
-	fmt.fmt.pix.height = 480;
-	fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_SGRBG10;
-	fmt.fmt.pix.field = V4L2_FIELD_NONE;
-
-	if (-1 == IOCTL(fd, VIDIOC_S_FMT, &fmt)) {
-		ERROR("Setting Pixel Format");
-		return 1;
-	}
-
-	strncpy(fourcc, (char *)&fmt.fmt.pix.pixelformat, 4);
-	CONSOLE("Selected Camera Mode:\n"
-			"  Width: %d\n"
-			"  Height: %d\n"
-			"  PixFmt: %s\n"
-			"  Field: %d\n",
-			fmt.fmt.pix.width,
-			fmt.fmt.pix.height,
-			fourcc,
-			fmt.fmt.pix.field);
+//	struct v4l2_format fmt = {0};
+//	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+//	fmt.fmt.pix.width = 752;
+//	fmt.fmt.pix.height = 480;
+//	fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_SGRBG10;
+//	fmt.fmt.pix.field = V4L2_FIELD_NONE;
+//
+//	if (-1 == IOCTL(dev, VIDIOC_S_FMT, &fmt)) {
+//		ERROR("Setting Pixel Format");
+//		return 1;
+//	}
+//
+//	strncpy(fourcc, (char *)&fmt.fmt.pix.pixelformat, 4);
+//	CONSOLE("Selected Camera Mode:\n"
+//			"  Width: %d\n"
+//			"  Height: %d\n"
+//			"  PixFmt: %s\n"
+//			"  Field: %d\n",
+//			fmt.fmt.pix.width,
+//			fmt.fmt.pix.height,
+//			fourcc,
+//			fmt.fmt.pix.field);
 	return 0;
 }
 

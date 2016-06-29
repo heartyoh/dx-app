@@ -89,6 +89,37 @@ int dx_video_v4l2_init_mmap(int fd, uint8_t** buffer, int* size) {
     return 0;
 }
 
+int dx_video_v4l2_set_fmt(int dev, char* fourcc, int* width, int* height) {
+	struct v4l2_format fmt = {0};
+
+	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	fmt.fmt.pix.width = *width;
+	fmt.fmt.pix.height = *height;
+	fmt.fmt.pix.pixelformat = v4l2_fourcc(fourcc[0], fourcc[1], fourcc[2], fourcc[3]);
+	fmt.fmt.pix.field = V4L2_FIELD_NONE;
+
+	if (-1 == IOCTL(dev, VIDIOC_S_FMT, &fmt)) {
+		ERROR("Setting Pixel Format");
+		return 1;
+	}
+
+	CONSOLE("Selected Camera Mode:\n"
+			"  Width: %d\n"
+			"  Height: %d\n"
+			"  PixFmt: %.*s\n"
+			"  Field: %d\n",
+			fmt.fmt.pix.width,
+			fmt.fmt.pix.height,
+			4,
+			(char*)&fmt.fmt.pix.pixelformat,
+			fmt.fmt.pix.field);
+
+	*width = fmt.fmt.pix.width;
+	*height = fmt.fmt.pix.height;
+
+	return 0;
+}
+
 int dx_video_v4l2_capture_image(int fd, uint8_t* buffer) {
     struct v4l2_buffer buf = {0};
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;

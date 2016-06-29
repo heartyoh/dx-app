@@ -66,7 +66,9 @@ void demo_video_file_info(char* cmdline);
 void demo_video_file_close(char* cmdline);
 
 void demo_camera_open(char* cmdline);
-void demo_camera_info(char* cmdline);
+void demo_camera_query_cap(char* cmdline);
+void demo_camera_enum_fmt(char* cmdline);
+void demo_camera_set_fmt(char* cmdline);
 void demo_camera_capture(char* cmdline);
 void demo_camera_close(char* cmdline);
 

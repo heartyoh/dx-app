@@ -41,11 +41,43 @@ int demo_camera_check_open() {
 	return 0;
 }
 
-void demo_camera_info(char* cmdline) {
+void demo_camera_query_cap(char* cmdline) {
 	if(demo_camera_check_open())
 		return;
 
-	dx_video_v4l2_query(camera_fd);
+	dx_video_v4l2_query_cap(camera_fd);
+}
+
+void demo_camera_enum_fmt(char* cmdline) {
+	if(demo_camera_check_open())
+		return;
+
+	dx_video_v4l2_enum_fmt(camera_fd);
+}
+
+void demo_camera_set_fmt(char* cmdline) {
+	if(demo_camera_check_open())
+		return;
+
+	char* fourcc = strtok(cmdline, " \t\n\f");
+	char* str_width = strtok(NULL, " \t\n\f");
+	char* str_height = strtok(NULL, " \t\n\f");
+
+	int width, height;
+
+	if(fourcc == NULL)
+		fourcc = "YUYV";
+	if(str_width == NULL)
+		width = 640;
+	else
+		width = atoi(str_width);
+	if(str_height == NULL)
+		height = 480;
+	else
+		height = atoi(str_height);
+
+	if(0 == dx_video_v4l2_set_fmt(camera_fd, fourcc, &width, &height))
+		CONSOLE("Camera Pixel Format Set : %.*s, %d, %d\n", 4, fourcc, width, height);
 }
 
 void demo_camera_capture(char* cmdline) {

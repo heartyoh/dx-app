@@ -43,9 +43,11 @@ dx_console_menu_t demo_console_menus[]  = {
 			{502, "close", "", "close video file", demo_video_file_close},
 	{6, "camera", "", "do something about camera ..", NULL},
 		{60, "open", "[device]", "open camera", demo_camera_open},
-		{61, "info", "", "print camera info", demo_camera_info},
-		{62, "capture", "", "capture image", demo_camera_capture},
-		{63, "close", "", "close camera", demo_camera_close},
+		{61, "query-cap", "", "print camera capabilities", demo_camera_query_cap},
+		{62, "enum-fmt", "", "enumerate formats", demo_camera_enum_fmt},
+		{62, "set-fmt", "", "set pixel format", demo_camera_set_fmt},
+		{64, "capture", "", "capture image", demo_camera_capture},
+		{65, "close", "", "close camera", demo_camera_close},
 	{0},
 };
 

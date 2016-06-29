@@ -15,6 +15,7 @@
 
 int dx_video_v4l2_open(char* dev_name, int* fd);
 int dx_video_v4l2_close(int fd);
+int dx_video_v4l2_set_fmt(int fd, char* fourcc, int* width, int* height);
 int dx_video_v4l2_init_mmap(int fd, uint8_t** buffer, int* size);
 int dx_video_v4l2_capture_image(int fd, uint8_t* buffer);
 

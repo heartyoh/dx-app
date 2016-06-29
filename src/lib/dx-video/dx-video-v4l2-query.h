@@ -13,6 +13,7 @@
 #ifndef __DX_VIDEO_V4L2_QUERY_H
 #define __DX_VIDEO_V4L2_QUERY_H
 
-int dx_video_v4l2_query(int fd);
+int dx_video_v4l2_enum_fmt(int fd);
+int dx_video_v4l2_query_cap(int fd);
 
 #endif /* __DX_VIDEO_V4L2_QUERY_H */
