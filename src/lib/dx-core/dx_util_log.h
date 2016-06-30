@@ -23,6 +23,7 @@ FILE* dx_logfile();
 #define CONSOLE(fmt, ...) do { fprintf(stdout, fmt, ##__VA_ARGS__); } while(0);
 #define DEBUG(fmt, ...) do { fprintf(stdout, "[[[\n" fmt "]]]\n", ##__VA_ARGS__); } while(0);
 #define ERROR(fmt, ...) do { fprintf(stderr, fmt "=> %s:%d:%s()\n", ##__VA_ARGS__, __FILE__, __LINE__, __func__); } while(0);
+#define ERRORNO(fmt, ...) do { fprintf(stderr, fmt "(%d-%s)=> %s:%d:%s()\n", ##__VA_ARGS__, errno, strerror(errno), __FILE__, __LINE__, __func__); } while(0);
 
 #else
 
@@ -30,6 +31,7 @@ FILE* dx_logfile();
 #define CONSOLE(fmt, ...) do { fprintf(stdout, fmt, ##__VA_ARGS__); } while(0);
 #define DEBUG(fmt, ...) do { fprintf(stdout, "[[[\n" fmt "]]]\n", ##__VA_ARGS__); } while(0);
 #define ERROR(fmt, ...) do { fprintf(stderr, fmt "=> %s:%d:%s()\n", ##__VA_ARGS__, __FILE__, __LINE__, __func__); } while(0);
+#define ERRORNO(fmt, ...) do { fprintf(stderr, fmt "(%d-%s)=> %s:%d:%s()\n", ##__VA_ARGS__, errno, strerror(errno), __FILE__, __LINE__, __func__); } while(0);
 
 #endif
 

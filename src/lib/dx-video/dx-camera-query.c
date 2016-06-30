@@ -29,9 +29,9 @@
 #include <linux/usb/video.h>
 
 #include "dx-core.h"
-#include "dx-video-v4l2-query.h"
+#include "dx-camera-query.h"
 
-int dx_video_v4l2_enum_fmt(int dev) {
+int dx_camera_enum_fmt(int dev) {
 	struct v4l2_fmtdesc fmtdesc = {0};
 
 	fmtdesc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -50,7 +50,7 @@ int dx_video_v4l2_enum_fmt(int dev) {
 	return 0;
 }
 
-int dx_video_v4l2_query_cap(int dev) {
+int dx_camera_query_cap(int dev) {
 
 	struct v4l2_capability caps = {};
 	if (-1 == IOCTL(dev, VIDIOC_QUERYCAP, &caps)) {
@@ -87,28 +87,6 @@ int dx_video_v4l2_query_cap(int dev) {
 			cropcap.defrect.width, cropcap.defrect.height, cropcap.defrect.left, cropcap.defrect.top,
 			cropcap.pixelaspect.numerator, cropcap.pixelaspect.denominator);
 
-//	struct v4l2_format fmt = {0};
-//	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-//	fmt.fmt.pix.width = 752;
-//	fmt.fmt.pix.height = 480;
-//	fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_SGRBG10;
-//	fmt.fmt.pix.field = V4L2_FIELD_NONE;
-//
-//	if (-1 == IOCTL(dev, VIDIOC_S_FMT, &fmt)) {
-//		ERROR("Setting Pixel Format");
-//		return 1;
-//	}
-//
-//	strncpy(fourcc, (char *)&fmt.fmt.pix.pixelformat, 4);
-//	CONSOLE("Selected Camera Mode:\n"
-//			"  Width: %d\n"
-//			"  Height: %d\n"
-//			"  PixFmt: %s\n"
-//			"  Field: %d\n",
-//			fmt.fmt.pix.width,
-//			fmt.fmt.pix.height,
-//			fourcc,
-//			fmt.fmt.pix.field);
 	return 0;
 }
 

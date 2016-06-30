@@ -33,7 +33,7 @@ int demo_live_schedule_callback(void* sender_fd) {
 		 * TODO 여기서 프레임버퍼로 Capture
 		 */
 
-		dx_video_v4l2_capture_image(live_camera_fd, demo_live_buffer);
+		dx_camera_capture_image(live_camera_fd, demo_live_buffer);
 
 		if(demo_live_buffer == NULL)
 			demo_live_buffer = MALLOC(3 * 1024 * 1024);
@@ -68,7 +68,7 @@ void demo_on_live_start(int fd) {
 	}
 
 	if(live_camera_fd != -1) {
-		dx_video_v4l2_close(live_camera_fd);
+		dx_camera_close(live_camera_fd);
 		CONSOLE("현재 열려있는 비디오 파일을 닫았습니다.\n");
 		live_camera_fd = -1;
 	}
@@ -76,7 +76,7 @@ void demo_on_live_start(int fd) {
 	demo_live_stream_idx = 0;
 
 	// Camera Open
-	dx_video_v4l2_open("/dev/video0", &live_camera_fd);
+	dx_camera_open("/dev/video0", &live_camera_fd);
 
 	if(live_camera_fd == -1) {
 		ERROR("동영상 파일 오픈에 실패하였습니다.");
@@ -92,7 +92,7 @@ void demo_on_live_start(int fd) {
 //    }
 
 	// Start Stream
-	dx_video_v4l2_stream_on(live_camera_fd);
+	dx_camera_stream_on(live_camera_fd);
 
 	/* 새로운 스트리밍 스케쥴러를 등록하고, 바로 시작합니다. */
 	demo_live_stream_schedule = dx_schedule_register(0, 1000/30 /* 30 frames */, 1, demo_live_schedule_callback, (void*)fd);
@@ -107,8 +107,8 @@ void demo_on_live_stop(int fd) {
 	}
 
 	if(live_camera_fd != -1) {
-		dx_video_v4l2_stream_off(live_camera_fd);
-		dx_video_v4l2_close(live_camera_fd);
+		dx_camera_stream_off(live_camera_fd);
+		dx_camera_close(live_camera_fd);
 		live_camera_fd = -1;
 	}
 

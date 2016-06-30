@@ -10,15 +10,10 @@
 // PARTICULAR PURPOSE.
 //
 
-#ifndef __DX_VIDEO_V4L2_H
-#define __DX_VIDEO_V4L2_H
+#ifndef __DX_CAMERA_QUERY_H
+#define __DX_CAMERA_QUERY_H
 
-int dx_video_v4l2_open(char* dev_name, int* fd);
-int dx_video_v4l2_close(int fd);
-int dx_video_v4l2_set_fmt(int fd, char* fourcc, int* width, int* height);
-int dx_video_v4l2_init_mmap(int fd, uint8_t** buffer, int* size);
-int dx_video_v4l2_capture_image(int fd, uint8_t* buffer);
-int dx_video_v4l2_stream_on(int fd);
-int dx_video_v4l2_stream_off(int fd);
+int dx_camera_enum_fmt(int fd);
+int dx_camera_query_cap(int fd);
 
-#endif /* __DX_VIDEO_V4L2_H */
+#endif /* __DX_CAMERA_QUERY_H */
