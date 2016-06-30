@@ -47,7 +47,9 @@ dx_console_menu_t demo_console_menus[]  = {
 		{62, "enum-fmt", "", "enumerate formats", demo_camera_enum_fmt},
 		{62, "set-fmt", "", "set pixel format", demo_camera_set_fmt},
 		{64, "capture", "", "capture image", demo_camera_capture},
-		{65, "close", "", "close camera", demo_camera_close},
+		{65, "start-streaming", "", "start streaming", demo_camera_start_streaming},
+		{66, "stop-streaming", "", "stop streaming", demo_camera_stop_streaming},
+		{67, "close", "", "close camera", demo_camera_close},
 	{0},
 };
 

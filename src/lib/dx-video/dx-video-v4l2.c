@@ -120,6 +120,30 @@ int dx_video_v4l2_set_fmt(int dev, char* fourcc, int* width, int* height) {
 	return 0;
 }
 
+int dx_video_v4l2_stream_on(int fd) {
+	int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+    if(-1 == dx_ioctl(fd, VIDIOC_STREAMON, &type)) {
+    	ERROR("Stream On Error %d, %s", errno, strerror(errno));
+    	if(errno == EIO)
+    		ERROR("You may run this program on virtual machine.")
+        return 1;
+    }
+	
+	return 0;
+}
+
+int dx_video_v4l2_stream_off(int fd) {
+	int type = V4L2_BUF_TYPE_VIDEO_CAPTURE; 
+
+    if(-1 == dx_ioctl(fd, VIDIOC_STREAMOFF, &type)) {
+    	ERROR("Stream Off Error %d, %s", errno, strerror(errno));
+        return 1;
+    }
+	
+	return 0;
+}
+
 int dx_video_v4l2_capture_image(int fd, uint8_t* buffer) {
     struct v4l2_buffer buf = {0};
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -130,12 +154,8 @@ int dx_video_v4l2_capture_image(int fd, uint8_t* buffer) {
         return 1;
     }
 
-    if(-1 == dx_ioctl(fd, VIDIOC_STREAMON, &buf.type)) {
-    	ERROR("Start Capture Error %d, %s", errno, strerror(errno));
-    	if(errno == EIO)
-    		ERROR("You may run this program on virtual machine.")
-        return 1;
-    }
+	if(0 != dx_video_v4l2_stream_on(fd))
+		return 1;
 
     fd_set fds;
     FD_ZERO(&fds);
@@ -161,6 +181,8 @@ int dx_video_v4l2_capture_image(int fd, uint8_t* buffer) {
     CONSOLE("Trying to write image file (size: %d)", buf.bytesused);
     write(outfd, buffer, buf.bytesused);
     close(outfd);
+
+	dx_video_v4l2_stream_off(fd);
 
     return 0;
 }

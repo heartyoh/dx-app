@@ -48,6 +48,7 @@ dx_demo_SOURCES = main.c \
                   server_handler_command.c \
                   client_handler.c \
                   server_handler_command_playback.c \
+                  server_handler_command_live.c \
                   client_handler_command.c
 
 dx_demo_LDADD = $(top_builddir)/src/lib/dx-core/libdx-core.a

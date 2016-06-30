@@ -14,6 +14,9 @@
 void demo_on_playback_start(int fd, dx_packet_t* packet);
 void demo_on_playback_stop(int fd);
 
+void demo_on_live_start(int fd);
+void demo_on_live_stop(int fd);
+
 int server_handler_command(int fd, dx_packet_t* packet) {
     printf("(Server Event Handling) Command(%d)\n", packet->header.code);
 
@@ -31,6 +34,15 @@ int server_handler_command(int fd, dx_packet_t* packet) {
     case DEMO_CMD_STOP_PLAYBACK  :   /* 플레이백 스트림 종료 명령 */
     	demo_on_playback_stop(fd);
     	break;
+
+    case DEMO_CMD_START_LIVE :   /* Live 스트림 시작 명령 */
+    	demo_on_live_start(fd);
+    	break;
+
+    case DEMO_CMD_STOP_LIVE  :   /* Live 스트림 종료 명령 */
+    	demo_on_live_stop(fd);
+    	break;
+
     case DEMO_CMD_FORMAT_SDCARD_1 :  /* SD 카드 1 포맷 명령 */
     	break;
     case DEMO_CMD_FORMAT_SDCARD_2 :  /* SD 카드 2 포맷 명령 */

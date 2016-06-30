@@ -1,7 +1,11 @@
 #include "demo.h"
 
-//dx_camera_context_t* demo_camera_context = NULL;
+#include <linux/videodev2.h>
+#include <linux/uvcvideo.h>
+#include <linux/usb/video.h>
+
 int camera_fd = -1;
+struct v4l2_buffer v4l2_buffer = {0};
 
 void demo_camera_open(char* cmdline) {
 
@@ -76,8 +80,12 @@ void demo_camera_set_fmt(char* cmdline) {
 	else
 		height = atoi(str_height);
 
-	if(0 == dx_video_v4l2_set_fmt(camera_fd, fourcc, &width, &height))
-		CONSOLE("Camera Pixel Format Set : %.*s, %d, %d\n", 4, fourcc, width, height);
+	if(dx_video_v4l2_set_fmt(camera_fd, fourcc, &width, &height)) {
+		ERROR("SETFMT");
+		return 1;
+	}
+
+	CONSOLE("Camera Pixel Format Set : %.*s, %d, %d\n", 4, fourcc, width, height);
 }
 
 void demo_camera_capture(char* cmdline) {
@@ -95,4 +103,34 @@ void demo_camera_capture(char* cmdline) {
 	dx_video_yuv_alloc_buffer(yuv, buffer, size);
 
 	dx_video_v4l2_capture_image(camera_fd, yuv->buffer);
+}
+
+void demo_camera_start_streaming(char* cmdline) {
+	if(demo_camera_check_open())
+		return;
+
+//	memset(&v4l2_buffer, 0, sizeof(v4l2_buffer));
+//
+//  v4l2_buffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+//	v4l2_buffer.memory = V4L2_MEMORY_MMAP;
+//	v4l2_buffer.index = 0;
+
+	dx_video_v4l2_stream_on(camera_fd);
+
+//    if(dx_ioctl(camera_fd, VIDIOC_QBUF, &v4l2_buffer)) {
+//        ERROR("Query Buffer");
+//        return 1;
+//    }
+}
+
+void demo_camera_stop_streaming(char* cmdline) {
+	if(demo_camera_check_open())
+		return;
+
+//	if(dx_ioctl(camera_fd, VIDIOC_DQBUF, &v4l2_buffer)) {
+//        ERROR("DQ Buffer");
+//        return 1;
+//	}
+
+	dx_video_v4l2_stream_off(camera_fd);
 }

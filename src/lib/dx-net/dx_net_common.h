@@ -62,6 +62,8 @@
 #define DX_STREAM_BASE          		0x00
 #define DX_STREAM           			(DX_STREAM_BASE + 0)
 #define DX_STREAM_PLAYBACK				(DX_STREAM_BASE + 1)
+#define DX_STREAM_LIVE_MCH			    (DX_STREAM_BASE + 2)
+#define DX_STREAM_LIVE				    (DX_STREAM_BASE + 3)
 
 /* Movie Playback */
 #define DX_MOVIE_BASE					0x00

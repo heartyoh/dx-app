@@ -30,16 +30,16 @@
  * Definitions
  */
 typedef struct server_value {
-	uint8_t				state;
-	dx_primitive_data_t	data;
+    uint8_t                state;
+    dx_primitive_data_t    data;
 } server_value_t;
 
 extern server_value_t server_settings[];
 extern server_value_t server_status[];
 
 typedef struct client_value {
-	uint8_t				state;
-	dx_primitive_data_t	data;
+    uint8_t                state;
+    dx_primitive_data_t    data;
 } client_value_t;
 
 extern client_value_t client_settings[];
@@ -83,12 +83,12 @@ int client_handler_movie(int fd, dx_packet_t* packet);
 #define DEMO_VIEW_FULL_REAR               0x08    /* 전면 후방 : 800 x 480 or 680 x 480 */
 #define DEMO_VIEW_TOP                     0x09    /* 탑뷰 : 264 x 600 or 264 x 480 */
 #define DEMO_VIEW_4CH                     0x0A    /* 4분면의 RAW 영상 : 1440 x 960 */
-#define DEMO_VIEW_HD						          0x0B	/* HD 카메라 영상 : 1280 X 720 */
+#define DEMO_VIEW_HD                                  0x0B    /* HD 카메라 영상 : 1280 X 720 */
 
 /* Discovery Code */
-#define DEMO_DISCOVERY_BASE				0x00
-#define DEMO_DISCOVERY_REQ				(DEMO_DISCOVERY_BASE + 0)	/* Discovery 요청 */
-#define DEMO_DISCOVERY_RESP				(DEMO_DISCOVERY_BASE + 1)	/* Discovery 응답 */
+#define DEMO_DISCOVERY_BASE                0x00
+#define DEMO_DISCOVERY_REQ                (DEMO_DISCOVERY_BASE + 0)    /* Discovery 요청 */
+#define DEMO_DISCOVERY_RESP                (DEMO_DISCOVERY_BASE + 1)    /* Discovery 응답 */
 
 /* Settings */
 
@@ -122,7 +122,7 @@ int client_handler_movie(int fd, dx_packet_t* packet);
 #define DEMO_SET_FW_VERSION               (DEMO_SETTING_BASE + 21)  /* 펌웨어 버전 - READ ONLY */
 #define DEMO_SET_MICOM_VERSION            (DEMO_SETTING_BASE + 22)  /* 마이콤 버전 - READ ONLY */
 
-#define DEMO_SET_SPEED_INFO_FROM_ECU		(DEMO_SETTING_BASE + 23)  /* ECU의 속도정보를 받는지 여부. */
+#define DEMO_SET_SPEED_INFO_FROM_ECU        (DEMO_SETTING_BASE + 23)  /* ECU의 속도정보를 받는지 여부. */
 
 /* My Car Settings */
 
@@ -203,51 +203,51 @@ int client_handler_movie(int fd, dx_packet_t* packet);
 
 /* Dash Cam Settings */
 
-#define DEMO_SET_DASHCAM_BASE            	0x80
-#define	DEMO_SET_RECORD_MOTION_LEVEL		(DEMO_SET_DASHCAM_BASE)		/* 모션 센싱 레벨 (0-9) */
-#define	DEMO_SET_RECORD_POWER_CUT_VOLTAGE	(DEMO_SET_DASHCAM_BASE + 1)	/* 전원 차단 레벨 전압 */
-#define	DEMO_SET_RECORD_VOICE_ONOFF		(DEMO_SET_DASHCAM_BASE + 2)	/* 녹음 여부 */
-#define	DEMO_SET_RECORD_MIC_VOLUME		(DEMO_SET_DASHCAM_BASE + 3)	/* 마이크 볼륨 */
+#define DEMO_SET_DASHCAM_BASE                0x80
+#define    DEMO_SET_RECORD_MOTION_LEVEL        (DEMO_SET_DASHCAM_BASE)        /* 모션 센싱 레벨 (0-9) */
+#define    DEMO_SET_RECORD_POWER_CUT_VOLTAGE    (DEMO_SET_DASHCAM_BASE + 1)    /* 전원 차단 레벨 전압 */
+#define    DEMO_SET_RECORD_VOICE_ONOFF        (DEMO_SET_DASHCAM_BASE + 2)    /* 녹음 여부 */
+#define    DEMO_SET_RECORD_MIC_VOLUME        (DEMO_SET_DASHCAM_BASE + 3)    /* 마이크 볼륨 */
 #ifdef  DEMO_SET_RECORD_MIC_VOLUME
-    #define DEMO_VAL_MIC_VOLUME_LOW		0x00
-    #define DEMO_VAL_MIC_VOLUME_MID		0x01
-    #define DEMO_VAL_MIC_VOLUME_HIGH		0x02
+    #define DEMO_VAL_MIC_VOLUME_LOW        0x00
+    #define DEMO_VAL_MIC_VOLUME_MID        0x01
+    #define DEMO_VAL_MIC_VOLUME_HIGH        0x02
 #endif
-#define	DEMO_SET_RECORD_SPEAKER_VOLUME	(DEMO_SET_DASHCAM_BASE + 4)	/* 스피커 볼륨 */
+#define    DEMO_SET_RECORD_SPEAKER_VOLUME    (DEMO_SET_DASHCAM_BASE + 4)    /* 스피커 볼륨 */
 #ifdef  DEMO_SET_RECORD_MIC_VOLUME
-    #define DEMO_VAL_SPEAKER_VOLUME_LOW		0x00
-    #define DEMO_VAL_SPEAKER_VOLUME_MID		0x01
-    #define DEMO_VAL_SPEAKER_VOLUME_HIGH		0x02
+    #define DEMO_VAL_SPEAKER_VOLUME_LOW        0x00
+    #define DEMO_VAL_SPEAKER_VOLUME_MID        0x01
+    #define DEMO_VAL_SPEAKER_VOLUME_HIGH        0x02
 #endif
-#define	DEMO_SET_RECORD_MEANT_ONOFF		(DEMO_SET_DASHCAM_BASE + 5)	/* MEANT 설정 ? */
-#define	DEMO_SET_RECORD_SD_CARD_FORMAT	(DEMO_SET_DASHCAM_BASE + 6)	/* SD 카드 포맷 ? */
+#define    DEMO_SET_RECORD_MEANT_ONOFF        (DEMO_SET_DASHCAM_BASE + 5)    /* MEANT 설정 ? */
+#define    DEMO_SET_RECORD_SD_CARD_FORMAT    (DEMO_SET_DASHCAM_BASE + 6)    /* SD 카드 포맷 ? */
 #ifdef  DEMO_SET_RECORD_SD_CARD_FORMAT
-    #define DEMO_VAL_SD_CARD_ACTION		0x00
-    #define DEMO_VAL_SD_CARD_CANCEL		0x01
+    #define DEMO_VAL_SD_CARD_ACTION        0x00
+    #define DEMO_VAL_SD_CARD_CANCEL        0x01
 #endif
-#define	DEMO_SET_RECORD_SD_CARD_CHECK		(DEMO_SET_DASHCAM_BASE + 7)	/* SD 카드 체크 ? */
-#define DEMO_SET_G_SENSIBILITY            (DEMO_SET_DASHCAM_BASE + 8)	/* G-Sensor 감도 */
+#define    DEMO_SET_RECORD_SD_CARD_CHECK        (DEMO_SET_DASHCAM_BASE + 7)    /* SD 카드 체크 ? */
+#define DEMO_SET_G_SENSIBILITY            (DEMO_SET_DASHCAM_BASE + 8)    /* G-Sensor 감도 */
 #ifdef  DEMO_SET_G_SENSIBILITY
     #define DEMO_VAL_SENSIBILITY_LOW      0x00
     #define DEMO_VAL_SENSIBILITY_NORMAL   0x01
     #define DEMO_VAL_SENSIBILITY_HIGH     0x02
 #endif
-#define DEMO_SET_RECORD_SELECT_CAMERA     (DEMO_SET_DASHCAM_BASE + 9)	/* 녹화 대상 카메라 */
+#define DEMO_SET_RECORD_SELECT_CAMERA     (DEMO_SET_DASHCAM_BASE + 9)    /* 녹화 대상 카메라 */
 #ifdef  DEMO_SET_RECORD_SELECT_CAMERA
-    #define DEMO_VAL_CAMERA_HD			0x00
-    #define DEMO_VAL_CAMERA_4VGA			0x01
-    #define DEMO_VAL_CAMERA_AVM			0x02
+    #define DEMO_VAL_CAMERA_HD            0x00
+    #define DEMO_VAL_CAMERA_4VGA            0x01
+    #define DEMO_VAL_CAMERA_AVM            0x02
 #endif
-#define DEMO_SET_RECORD_VIDEO_QUALITY     (DEMO_SET_DASHCAM_BASE + 10)	/* 녹화 영상 품질 */
+#define DEMO_SET_RECORD_VIDEO_QUALITY     (DEMO_SET_DASHCAM_BASE + 10)    /* 녹화 영상 품질 */
 #ifdef  DEMO_SET_RECORD_VIDEO_QUALITY
-    #define DEMO_VAL_QUALITY_LOW			0x00
-    #define DEMO_VAL_QUALITY_MID			0x01
-    #define DEMO_VAL_QUALITY_HIGH			0x02
+    #define DEMO_VAL_QUALITY_LOW            0x00
+    #define DEMO_VAL_QUALITY_MID            0x01
+    #define DEMO_VAL_QUALITY_HIGH            0x02
 #endif
-#define DEMO_SET_RECORD_TIMEZONE			(DEMO_SET_DASHCAM_BASE + 11)	/* 타임존 설정 */
+#define DEMO_SET_RECORD_TIMEZONE            (DEMO_SET_DASHCAM_BASE + 11)    /* 타임존 설정 */
 #ifdef  DEMO_SET_RECORD_TIMEZONE
-#define DEMO_VAL_UTC						0x00
-#define	DEMO_VAL_TIMEZONE					0x01
+#define DEMO_VAL_UTC                        0x00
+#define    DEMO_VAL_TIMEZONE                    0x01
 #endif
 
 /* Fleet Management Settings */
@@ -274,8 +274,8 @@ int client_handler_movie(int fd, dx_packet_t* packet);
 #define DEMO_STAT_EMERGENCY_SIGNAL        (DEMO_STAT_BASE + 11) /* 비상등 상태 */
 #define DEMO_STAT_EMERGENCY_RECORDING     (DEMO_STAT_BASE + 12) /* 블랙박스 비상 녹화 상태 */
 #define DEMO_STAT_RECORDING_TIME          (DEMO_STAT_BASE + 13) /* 블랙박스 상시 녹화 경과 시간 */
-#define DEMO_STAT_STORAGE_1_USAGE			(DEMO_STAT_BASE + 14) /* SD카드 1 사용량 */
-#define DEMO_STAT_STORAGE_2_USAGE			(DEMO_STAT_BASE + 15) /* SD카드 2 사용량 */
+#define DEMO_STAT_STORAGE_1_USAGE            (DEMO_STAT_BASE + 14) /* SD카드 1 사용량 */
+#define DEMO_STAT_STORAGE_2_USAGE            (DEMO_STAT_BASE + 15) /* SD카드 2 사용량 */
 
 /* Event Types */
 
@@ -296,11 +296,11 @@ int client_handler_movie(int fd, dx_packet_t* packet);
 #define DEMO_EVT_UPDATE_PROGRESS          (DEMO_EVT_BASE + 13)  /* 서버 프로그램 업데이트 진행율 변화 */
 #define DEMO_EVT_UPDATE_END               (DEMO_EVT_BASE + 14)  /* 서버 프로그램 업데이트 종료 */
 #define DEMO_EVT_CHANGE_RECORDING_TIME    (DEMO_EVT_BASE + 15)  /* 녹화 진행 시간 변화 */
-#define DEMO_EVT_RECORD_EVENT_FINISH		  (DEMO_EVT_BASE + 16)	/* 이벤트 녹화 완료 */
-#define DEMO_EVT_FORMAT_SDCARD_1_FINISH	  (DEMO_EVT_BASE + 17)  /* SD카드 1 포맷 완료 */
-#define DEMO_EVT_FORMAT_SDCARD_2_FINISH	  (DEMO_EVT_BASE + 18)  /* SD카드 2 포맷 완료 */
-#define DEMO_EVT_NEXT_VIEW_MODE			      (DEMO_EVT_BASE + 19)  /* 다음 뷰모드로 전환 */
-#define DEMO_EVT_APP_ON_OFF				        (DEMO_EVT_BASE + 20)  /* APP시작/종료 */
+#define DEMO_EVT_RECORD_EVENT_FINISH          (DEMO_EVT_BASE + 16)    /* 이벤트 녹화 완료 */
+#define DEMO_EVT_FORMAT_SDCARD_1_FINISH      (DEMO_EVT_BASE + 17)  /* SD카드 1 포맷 완료 */
+#define DEMO_EVT_FORMAT_SDCARD_2_FINISH      (DEMO_EVT_BASE + 18)  /* SD카드 2 포맷 완료 */
+#define DEMO_EVT_NEXT_VIEW_MODE                  (DEMO_EVT_BASE + 19)  /* 다음 뷰모드로 전환 */
+#define DEMO_EVT_APP_ON_OFF                        (DEMO_EVT_BASE + 20)  /* APP시작/종료 */
 
 /* Alarm Code */
 
@@ -331,42 +331,44 @@ int client_handler_movie(int fd, dx_packet_t* packet);
 #define DEMO_CMD_CHANGE_VIEW_MODE             (DEMO_CMD_BASE + 4)   /* 뷰모드 변경 명령 */
 #define DEMO_CMD_CAPTURE_STILLCUT             (DEMO_CMD_BASE + 5)   /* 현재 뷰모드 영상 스틸컷 캡쳐 명령 */
 #define DEMO_CMD_START_UPGRADE                (DEMO_CMD_BASE + 6)   /* 소프트웨어 업그레이드 시작 명령 */
-#define DEMO_CMD_START_PLAYBACK             	(DEMO_CMD_BASE + 7)   /* 프레이백 스트림 시작 명령 */
-#define DEMO_CMD_STOP_PLAYBACK              	(DEMO_CMD_BASE + 8)   /* 프레이백 스트림 종료 명령 */
-#define DEMO_CMD_START_STREAM             	  (DEMO_CMD_BASE + 9)   /* 영상 스트림 시작 명령 */
-#define DEMO_CMD_STOP_STREAM              	  (DEMO_CMD_BASE + 10)  /* 영상 스트림 종료 명령 */
+#define DEMO_CMD_START_PLAYBACK                 (DEMO_CMD_BASE + 7)   /* 프레이백 스트림 시작 명령 */
+#define DEMO_CMD_STOP_PLAYBACK              (DEMO_CMD_BASE + 8)   /* 프레이백 스트림 종료 명령 */
+#define DEMO_CMD_START_STREAM                   (DEMO_CMD_BASE + 9)   /* 영상 스트림 시작 명령 */
+#define DEMO_CMD_STOP_STREAM                    (DEMO_CMD_BASE + 10)  /* 영상 스트림 종료 명령 */
 #define DEMO_CMD_START_LIVE_4CH               (DEMO_CMD_BASE + 11)
-#define DEMO_CMD_START_LIVE_HD             	  (DEMO_CMD_BASE + 12)
-#define DEMO_CMD_STOP_LIVE_4CH	              (DEMO_CMD_BASE + 13)
-#define DEMO_CMD_STOP_LIVE_HD	            	  (DEMO_CMD_BASE + 14)
-#define DEMO_CMD_FORMAT_SDCARD_1				      (DEMO_CMD_BASE + 15)  /* SD 카드 1 포맷 명령 */
-#define DEMO_CMD_FORMAT_SDCARD_2				      (DEMO_CMD_BASE + 16)  /* SD 카드 2 포맷 명령 */
+#define DEMO_CMD_START_LIVE                   (DEMO_CMD_BASE + 12)
+#define DEMO_CMD_START_LIVE_HD                   (DEMO_CMD_BASE + 12)
+#define DEMO_CMD_STOP_LIVE_4CH                  (DEMO_CMD_BASE + 13)
+#define DEMO_CMD_STOP_LIVE                      (DEMO_CMD_BASE + 14)
+#define DEMO_CMD_STOP_LIVE_HD                  (DEMO_CMD_BASE + 14)
+#define DEMO_CMD_FORMAT_SDCARD_1              (DEMO_CMD_BASE + 15)  /* SD 카드 1 포맷 명령 */
+#define DEMO_CMD_FORMAT_SDCARD_2              (DEMO_CMD_BASE + 16)  /* SD 카드 2 포맷 명령 */
 
 /* File */
-#define DEMO_FILE_BASE                    0x00
-#define DEMO_FILE_GET_LIST                (DEMO_FILE_BASE + 0)
-#define DEMO_FILE_LIST                    (DEMO_FILE_BASE + 1)
-#define DEMO_FILE_GET                     (DEMO_FILE_BASE + 2)
-#define DEMO_FILE                         (DEMO_FILE_BASE + 3)
-#define DEMO_FILE_DELETE                  (DEMO_FILE_BASE + 4)
-#define DEMO_FILE_GET_CALIBRATION_INFO	  (DEMO_FILE_BASE + 10)		/* Calibration 정보 파일 요청 */
-#define DEMO_FILE_SET_CALIBRATION_INFO	  (DEMO_FILE_BASE + 11)		/* Calibration 정보 파일 업로드/다운로드 */
+#define DEMO_FILE_BASE                      0x00
+#define DEMO_FILE_GET_LIST                  (DEMO_FILE_BASE + 0)
+#define DEMO_FILE_LIST                      (DEMO_FILE_BASE + 1)
+#define DEMO_FILE_GET                       (DEMO_FILE_BASE + 2)
+#define DEMO_FILE                           (DEMO_FILE_BASE + 3)
+#define DEMO_FILE_DELETE                    (DEMO_FILE_BASE + 4)
+#define DEMO_FILE_GET_CALIBRATION_INFO      (DEMO_FILE_BASE + 10)        /* Calibration 정보 파일 요청 */
+#define DEMO_FILE_SET_CALIBRATION_INFO      (DEMO_FILE_BASE + 11)        /* Calibration 정보 파일 업로드/다운로드 */
 
 /* Stream */
-#define DEMO_STREAM_BASE					  0x00
-#define DEMO_STREAM						      (DEMO_STREAM_BASE + 0)
-#define DEMO_STREAM_PLAYBACK				(DEMO_STREAM_BASE + 1)
-#define DEMO_STREAM_LIVE_4CH				(DEMO_STREAM_BASE + 2)
-#define DEMO_STREAM_LIVE_HD				  (DEMO_STREAM_BASE + 3)
+#define DEMO_STREAM_BASE                     0x00
+#define DEMO_STREAM                          (DEMO_STREAM_BASE + 0)
+#define DEMO_STREAM_PLAYBACK                 (DEMO_STREAM_BASE + 1)
+#define DEMO_STREAM_LIVE_4CH                 (DEMO_STREAM_BASE + 2)
+#define DEMO_STREAM_LIVE_HD                  (DEMO_STREAM_BASE + 3)
 
 /* Movie Playback */
-#define DEMO_MOVIE_BASE					    0x00
-#define DEMO_MOVIE_GET_INFO				  (DEMO_MOVIE_BASE + 0)
-#define DEMO_MOVIE_INFO					    (DEMO_MOVIE_BASE + 1)
-#define DEMO_MOVIE_COMMAND_START		(DEMO_MOVIE_BASE + 2)
-#define DEMO_MOVIE_COMMAND_STOP			(DEMO_MOVIE_BASE + 3)
-#define DEMO_MOVIE_COMMAND_RESUME		(DEMO_MOVIE_BASE + 4)
-#define DEMO_MOVIE_COMMAND_PAUSE		(DEMO_MOVIE_BASE + 5)
-#define DEMO_MOVIE_FRAME					  (DEMO_MOVIE_BASE + 6)
+#define DEMO_MOVIE_BASE                      0x00
+#define DEMO_MOVIE_GET_INFO                  (DEMO_MOVIE_BASE + 0)
+#define DEMO_MOVIE_INFO                      (DEMO_MOVIE_BASE + 1)
+#define DEMO_MOVIE_COMMAND_START             (DEMO_MOVIE_BASE + 2)
+#define DEMO_MOVIE_COMMAND_STOP              (DEMO_MOVIE_BASE + 3)
+#define DEMO_MOVIE_COMMAND_RESUME            (DEMO_MOVIE_BASE + 4)
+#define DEMO_MOVIE_COMMAND_PAUSE             (DEMO_MOVIE_BASE + 5)
+#define DEMO_MOVIE_FRAME                     (DEMO_MOVIE_BASE + 6)
 
 #endif /* __DEMO_CONST_H */
