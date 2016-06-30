@@ -88,12 +88,20 @@ void demo_camera_set_fmt(char* cmdline) {
 	CONSOLE("Camera Pixel Format Set : %.*s, %d, %d\n", 4, fourcc, width, height);
 }
 
+int __count = 0;
 int demo_camera_capture_user_handler(dx_event_context_t* pcontext, void* buf) {
-	CONSOLE("CAPTURE Event .....\n");
-	return 1;
+	struct v4l2_buffer* buffer = (struct v4l2_buffer*)buf;
+
+	CONSOLE("BUFFER SIZE %d\n", buffer->bytesused);
+	if(__count++ > 100)
+		return 1;
+	return 0;
 }
 
 void demo_camera_capture(char* cmdline) {
+
+	__count = 0;
+
 	if(demo_camera_check_open())
 		return;
 

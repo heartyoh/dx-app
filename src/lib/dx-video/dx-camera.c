@@ -32,6 +32,7 @@
 #include "dx-camera.h"
 
 int dx_camera_readable_handler(dx_event_context_t* pcontext); 
+int dx_camera_destroy_handler(void* pbuf);
 
 int dx_camera_open(char* dev_name, int* fd) {
 	struct stat st;
@@ -106,28 +107,19 @@ int dx_camera_req_bufs(int fd, int count) {
 	return 0;
 }
 
-int dx_camera_query_buf(int fd, uint8_t** buffer, int* size) {
-    struct v4l2_buffer buf = {0};
-    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    buf.memory = V4L2_MEMORY_MMAP;
-    buf.index = 0;
-    if(-1 == dx_ioctl(fd, VIDIOC_QUERYBUF, &buf)) {
+int dx_camera_query_buf(int fd, struct v4l2_buffer* buf) {
+
+    if(-1 == dx_ioctl(fd, VIDIOC_QUERYBUF, buf)) {
         ERRORNO("Querying Buffer");
         return 1;
     }
-
-    *buffer = mmap (NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, buf.m.offset);
-	*size = buf.bytesused;
-
-    CONSOLE("Length: %d\nAddress: %p\n", buf.length, buffer);
-    CONSOLE("Image Length: %d\n", buf.bytesused);
 
 	return 0;
 }
 
 int dx_camera_queue_buf(int fd, struct v4l2_buffer* buf) {
 
-    if(-1 == dx_ioctl(fd, VIDIOC_QBUF, buf)) {
+    if(dx_ioctl(fd, VIDIOC_QBUF, buf)) {
         ERRORNO("Queue Buffer");
         return 1;
     }
@@ -137,8 +129,8 @@ int dx_camera_queue_buf(int fd, struct v4l2_buffer* buf) {
 
 int dx_camera_dqueue_buf(int fd, struct v4l2_buffer* buf) {
 
-    if(-1 == dx_ioctl(fd, VIDIOC_DQBUF, buf)) {
-        ERRORNO("Queue Buffer");
+    if(dx_ioctl(fd, VIDIOC_DQBUF, buf)) {
+        ERRORNO("Dequeue Buffer");
         return 1;
     }
 
@@ -148,7 +140,7 @@ int dx_camera_dqueue_buf(int fd, struct v4l2_buffer* buf) {
 int dx_camera_stream_on(int fd) {
 	int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-    if(-1 == dx_ioctl(fd, VIDIOC_STREAMON, &type)) {
+    if(dx_ioctl(fd, VIDIOC_STREAMON, &type)) {
     	ERRORNO("Stream On");
     	if(errno == EIO)
     		ERROR("You may run this program on virtual machine.")
@@ -161,7 +153,7 @@ int dx_camera_stream_on(int fd) {
 int dx_camera_stream_off(int fd) {
 	int type = V4L2_BUF_TYPE_VIDEO_CAPTURE; 
 
-    if(-1 == dx_ioctl(fd, VIDIOC_STREAMOFF, &type)) {
+    if(dx_ioctl(fd, VIDIOC_STREAMOFF, &type)) {
     	ERRORNO("Stream Off");
         return 1;
     }
@@ -217,25 +209,18 @@ int dx_camera_capture_start(int fd, dx_camera_event_handler handler) {
 	if(dx_camera_req_bufs(fd, 1))
 		return 1;
 
-	/*
-	uint8_t* _buf = NULL;
-	int size = -1;
- 
-	if(dx_camera_query_buf(fd, &_buf, &size))
+    struct v4l2_buffer* buf = MALLOC(sizeof(struct v4l2_buffer));
+    buf->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    buf->memory = V4L2_MEMORY_MMAP;
+    buf->index = 0;
+
+	if(dx_camera_query_buf(fd, buf))
 		return 1;
 
-	CONSOLE("BUF: %x, SIZE: %d\n", _buf, size); 
-	*/
+	if(dx_camera_queue_buf(fd, buf))
+		return 1;
 
 	if(dx_camera_stream_on(fd))
-		return 1;
-
-    struct v4l2_buffer buf = {0};
-    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    buf.memory = V4L2_MEMORY_MMAP;
-    buf.index = 0;
-
-	if(dx_camera_queue_buf(fd, &buf))
 		return 1;
 
 	/* register event context */
@@ -246,11 +231,18 @@ int dx_camera_capture_start(int fd, dx_camera_event_handler handler) {
 	pcontext->readable_handler = dx_camera_readable_handler;
 	pcontext->writable_handler = NULL;
 	pcontext->error_handler = NULL;
+	pcontext->pdata = buf;
+	pcontext->on_destroy = dx_camera_destroy_handler;
 
 	pcontext->user_handler = handler;
 	
 	dx_add_event_context(pcontext, EPOLLIN);	
 
+	return 0;
+}
+
+int dx_camera_destroy_handler(void* pbuf) {
+	FREE(pbuf);
 	return 0;
 }
 
@@ -263,17 +255,15 @@ int dx_camera_readable_handler(dx_event_context_t* pcontext) {
 	// 4. dx_del_event_context if user_handler returns the value other than 0
 	//    - streamoff
 
-    struct v4l2_buffer buf;
-	
-	dx_camera_dqueue_buf(pcontext->fd, &buf);
+	dx_camera_dqueue_buf(pcontext->fd, pcontext->pdata);
 
-	if(((dx_camera_event_handler) pcontext->user_handler)(pcontext, &buf)) {
+	if(((dx_camera_event_handler) pcontext->user_handler)(pcontext, pcontext->pdata)) {
 		dx_camera_stream_off(pcontext->fd);
 		dx_del_event_context(pcontext);
 		return 0;
 	}
 
-	dx_camera_queue_buf(pcontext->fd, &buf);
+	dx_camera_queue_buf(pcontext->fd, pcontext->pdata);
 
 	return 0;
 }
