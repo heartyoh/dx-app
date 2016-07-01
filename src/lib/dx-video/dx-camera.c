@@ -33,7 +33,7 @@
 #include "dx-video-yuv.h"
 
 int dx_camera_readable_handler(dx_event_context_t* pcontext); 
-int dx_camera_destroy_handler(void* pbuf);
+int dx_camera_destroy_handler(void* pdata);
 
 int dx_camera_open(char* dev_name, int* fd) {
 	struct stat st;
@@ -60,7 +60,6 @@ int dx_camera_open(char* dev_name, int* fd) {
 
 int dx_camera_close(int fd) {
 	if(!CHECK_FILE_CLOSED(fd)) {
-		dx_camera_stream_off(fd);
 		close(fd);
 	}
 
@@ -257,8 +256,16 @@ int dx_camera_capture_start(int fd, dx_camera_event_handler handler) {
 }
 
 int dx_camera_capture_stop(int fd) {
+	if(fd == -1)
+		return 0;
+
 	dx_camera_stream_off(fd);
-	return dx_camera_close(fd);
+	dx_camera_close(fd);
+
+	dx_event_context_t* pcontext = dx_get_event_context(fd);
+	if(pcontext)
+		dx_del_event_context(pcontext);
+	return 0;
 }
 
 int dx_camera_destroy_handler(void* yuv) {
@@ -279,19 +286,11 @@ int dx_camera_readable_handler(dx_event_context_t* pcontext) {
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf.memory = V4L2_MEMORY_MMAP;
 
-	if(dx_camera_dqueue_buf(pcontext->fd, &buf)) {
-		if(!CHECK_FILE_CLOSED(pcontext->fd))
-			dx_camera_stream_off(pcontext->fd);
-		dx_del_event_context(pcontext);
-		return 0;
-	}
+	if(dx_camera_dqueue_buf(pcontext->fd, &buf))
+		return 1;
 
-	if(((dx_camera_event_handler) pcontext->user_handler)(pcontext, pcontext->pdata)) {
-		if(!CHECK_FILE_CLOSED(pcontext->fd))
-			dx_camera_stream_off(pcontext->fd);
-		dx_del_event_context(pcontext);
-		return 0;
-	}
+	if(((dx_camera_event_handler) pcontext->user_handler)(pcontext, pcontext->pdata))
+		return 1;
 
 	dx_camera_queue_buf(pcontext->fd, &buf);
 
