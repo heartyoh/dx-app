@@ -45,11 +45,12 @@ dx_console_menu_t demo_console_menus[]  = {
 		{60, "open", "[device]", "open camera", demo_camera_open},
 		{61, "query-cap", "", "print camera capabilities", demo_camera_query_cap},
 		{62, "enum-fmt", "", "enumerate formats", demo_camera_enum_fmt},
-		{62, "set-fmt", "", "set pixel format", demo_camera_set_fmt},
-		{64, "capture", "", "capture image", demo_camera_capture},
-		{65, "start-streaming", "", "start streaming", demo_camera_start_streaming},
-		{66, "stop-streaming", "", "stop streaming", demo_camera_stop_streaming},
-		{67, "close", "", "close camera", demo_camera_close},
+		{62, "set-fmt", "[fourcc, width, height]", "set pixel format", demo_camera_set_fmt},
+		{64, "cs-capture-start", "", "start camera capture", demo_camera_capture_start},
+		{65, "ct-capture-stop", "", "stop camera capture", demo_camera_capture_stop},
+		{66, "ss-streaming-start", "", "start streaming", demo_camera_streaming_start},
+		{67, "st-streaming-stop", "", "stop streaming", demo_camera_streaming_stop},
+		{68, "close", "", "close camera", demo_camera_close},
 	{0},
 };
 

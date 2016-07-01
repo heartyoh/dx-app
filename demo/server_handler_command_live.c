@@ -33,7 +33,7 @@ int demo_live_schedule_callback(void* sender_fd) {
 		 * TODO 여기서 프레임버퍼로 Capture
 		 */
 
-		dx_camera_capture_image(live_camera_fd, demo_live_buffer);
+		//dx_camera_capture_image(live_camera_fd, demo_live_buffer);
 
 		if(demo_live_buffer == NULL)
 			demo_live_buffer = MALLOC(3 * 1024 * 1024);

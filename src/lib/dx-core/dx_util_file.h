@@ -14,6 +14,15 @@
 #ifndef __DX_UTIL_FILE_H
 #define __DX_UTIL_FILE_H
 
+/* Definitions */
+
+#include <fcntl.h>
+#include <errno.h>
+
+#define CHECK_FILE_CLOSED(fd) (fcntl(fd, F_GETFL) < 0 && errno == EBADF)
+
+/* APIs */
+
 char* dx_file_get_path(int fd);
 int dx_file_is_closed(int fd);
 

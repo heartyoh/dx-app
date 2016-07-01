@@ -29,5 +29,6 @@ int dx_camera_capture_image(int fd, uint8_t* buffer);
 int dx_camera_stream_on(int fd); 
 int dx_camera_stream_off(int fd);
 int dx_camera_capture_start(int fd, dx_camera_event_handler handler);
+int dx_camera_capture_stop(int fd);
 
 #endif /* __DX_CAMERA_H */

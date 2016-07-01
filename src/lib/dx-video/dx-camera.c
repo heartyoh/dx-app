@@ -58,7 +58,9 @@ int dx_camera_open(char* dev_name, int* fd) {
 }
 
 int dx_camera_close(int fd) {
-	close(fd);
+	if(!CHECK_FILE_CLOSED(fd))
+		close(fd);
+
 	return 0;
 }
 
@@ -161,49 +163,6 @@ int dx_camera_stream_off(int fd) {
 	return 0;
 }
 
-int dx_camera_capture_image(int fd, uint8_t* buffer) {
-//    struct v4l2_buffer buf = {0};
-//    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-//    buf.memory = V4L2_MEMORY_MMAP;
-//    buf.index = 0;
-//    if(-1 == dx_ioctl(fd, VIDIOC_QBUF, &buf)) {
-//        ERROR("Query Buffer");
-//        return 1;
-//    }
-//
-//	if(0 != dx_camera_stream_on(fd))
-//		return 1;
-//
-//    fd_set fds;
-//    FD_ZERO(&fds);
-//    FD_SET(fd, &fds);
-//    struct timeval tv = {0};
-//    tv.tv_sec = 2;
-//    int r = select(fd+1, &fds, NULL, NULL, &tv);
-//    if(-1 == r) {
-//    	ERROR("Waiting for Frame");
-//        return 1;
-//    }
-//
-//    if(-1 == dx_ioctl(fd, VIDIOC_DQBUF, &buf)) {
-//    	ERROR("Retrieving Frame");
-//        return 1;
-//    }
-//
-//    int outfd = open("out.img", O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-//    if(outfd < 0) {
-//    	ERROR("File open error : %d, %s", errno, strerror(errno));
-//    	return 1;
-//    }
-//    CONSOLE("Trying to write image file (size: %d)", buf.bytesused);
-//    write(outfd, buffer, buf.bytesused);
-//    close(outfd);
-//
-//	dx_camera_stream_off(fd);
-//
-    return 0;
-}
-
 int dx_camera_capture_start(int fd, dx_camera_event_handler handler) {
 
 	if(dx_camera_req_bufs(fd, 1))
@@ -241,6 +200,10 @@ int dx_camera_capture_start(int fd, dx_camera_event_handler handler) {
 	return 0;
 }
 
+int dx_camera_capture_stop(int fd) {
+	return dx_camera_close(fd);
+}
+
 int dx_camera_destroy_handler(void* pbuf) {
 	FREE(pbuf);
 	return 0;
@@ -258,7 +221,8 @@ int dx_camera_readable_handler(dx_event_context_t* pcontext) {
 	dx_camera_dqueue_buf(pcontext->fd, pcontext->pdata);
 
 	if(((dx_camera_event_handler) pcontext->user_handler)(pcontext, pcontext->pdata)) {
-		dx_camera_stream_off(pcontext->fd);
+		if(!CHECK_FILE_CLOSED(pcontext->fd))
+			dx_camera_stream_off(pcontext->fd);
 		dx_del_event_context(pcontext);
 		return 0;
 	}
