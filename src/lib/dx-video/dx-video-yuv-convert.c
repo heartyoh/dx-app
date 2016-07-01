@@ -79,21 +79,21 @@ int dx_video_yuv_merge(dx_video_yuv_t** srcs, dx_video_yuv_t* dst, int rows, int
 
 	dx_video_yuv_t* src = NULL;
 
-	ERROR("Start Merge.\n");
-
 	for(r = 0;r < rows;r++) {
 		for(i = 0;i < height;i++) {
 			for(c = 0;c < cols;c++) {
+
+				SY = SYS[r * rows + c];
+				SU = SUS[r * rows + c];
+				SV = SVS[r * rows + c];
+
 				for(j = 0;j < width;j++) {
 
 					// i : source row, j : source column
 					// di : dest row, dj : dest column
-					di = (r * height) + i;
-					dj = (c * width) + j;
+					di = r * height + i;
+					dj = c * width + j;
 
-					SY = SYS[r * rows + c];
-					SU = SUS[r * rows + c];
-					SV = SVS[r * rows + c];
 
 					src = *(srcs + (r * rows + c));
 
@@ -124,6 +124,10 @@ int dx_video_yuv_merge(dx_video_yuv_t** srcs, dx_video_yuv_t* dst, int rows, int
 						DV += dst->spec->stride_v;
 					}
 				}
+
+				SYS[r * rows + c] = SY;
+				SUS[r * rows + c] = SU;
+				SVS[r * rows + c] = SV;
 			}
 		}
 	}
