@@ -67,10 +67,12 @@ typedef struct dx_video_yuv {
  * API Functions.
  */
 
+int dx_video_yuv_get_type(char* fourcc);
+
 dx_video_yuv_t* dx_video_yuv_create(int type, int width, int height);
 int dx_video_yuv_destroy(dx_video_yuv_t* yuv);
 
-int dx_video_yuv_alloc_buffer(dx_video_yuv_t* yuv, uint8_t* buffer, int size);
+int dx_video_yuv_alloc_buffer(dx_video_yuv_t* yuv, int size, int fd, int offset);
 int dx_video_yuv_fill_plane(dx_video_yuv_t* yuv, int plane_idx, uint8_t value);
 
 int (*dx_video_yuv_capture)(dx_video_yuv_t* yuv);

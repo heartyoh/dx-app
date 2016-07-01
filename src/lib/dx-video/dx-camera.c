@@ -30,6 +30,7 @@
 
 #include "dx-core.h"
 #include "dx-camera.h"
+#include "dx-video-yuv.h"
 
 int dx_camera_readable_handler(dx_event_context_t* pcontext); 
 int dx_camera_destroy_handler(void* pbuf);
@@ -58,8 +59,10 @@ int dx_camera_open(char* dev_name, int* fd) {
 }
 
 int dx_camera_close(int fd) {
-	if(!CHECK_FILE_CLOSED(fd))
+	if(!CHECK_FILE_CLOSED(fd)) {
+		dx_camera_stream_off(fd);
 		close(fd);
+	}
 
 	return 0;
 }
@@ -73,12 +76,12 @@ int dx_camera_set_fmt(int dev, char* fourcc, int* width, int* height) {
 	fmt.fmt.pix.pixelformat = v4l2_fourcc(fourcc[0], fourcc[1], fourcc[2], fourcc[3]);
 	fmt.fmt.pix.field = V4L2_FIELD_NONE;
 
-	if (-1 == IOCTL(dev, VIDIOC_S_FMT, &fmt)) {
+	if (IOCTL(dev, VIDIOC_S_FMT, &fmt)) {
 		ERROR("Setting Pixel Format");
 		return 1;
 	}
 
-	CONSOLE("Selected Camera Mode:\n"
+	CONSOLE("Set Camera Format:\n"
 			"  Width: %d\n"
 			"  Height: %d\n"
 			"  PixFmt: %.*s\n"
@@ -95,14 +98,49 @@ int dx_camera_set_fmt(int dev, char* fourcc, int* width, int* height) {
 	return 0;
 }
 
+int dx_camera_get_fmt(int dev, char* fourcc, int* width, int* height) {
+	struct v4l2_format fmt = {0};
+	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+	if (IOCTL(dev, VIDIOC_G_FMT, &fmt)) {
+		ERROR("Getting Pixel Format");
+		return 1;
+	}
+
+	CONSOLE("Get Camera Format:\n"
+			"  Width: %d\n"
+			"  Height: %d\n"
+			"  PixFmt: %.*s\n"
+			"  Field: %d\n",
+			fmt.fmt.pix.width,
+			fmt.fmt.pix.height,
+			4,
+			(char*)&fmt.fmt.pix.pixelformat,
+			fmt.fmt.pix.field);
+
+	memset(fourcc, 0x0, 5);
+	strncpy(fourcc, (char*)&fmt.fmt.pix.pixelformat, 4); 
+	*width = fmt.fmt.pix.width;
+	*height = fmt.fmt.pix.height;
+
+	return 0;
+}
+
 int dx_camera_req_bufs(int fd, int count) {
     struct v4l2_requestbuffers req = {0};
-    req.count = count;
+    req.count = 0;
     req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     req.memory = V4L2_MEMORY_MMAP;
 
     if (-1 == dx_ioctl(fd, VIDIOC_REQBUFS, &req)) {
-        ERROR("Requesting Buffer");
+        ERROR("Release Buffer");
+        return 1;
+    }
+
+    req.count = count;
+
+    if (-1 == dx_ioctl(fd, VIDIOC_REQBUFS, &req)) {
+        ERROR("Release Buffer");
         return 1;
     }
 
@@ -168,16 +206,34 @@ int dx_camera_capture_start(int fd, dx_camera_event_handler handler) {
 	if(dx_camera_req_bufs(fd, 1))
 		return 1;
 
-    struct v4l2_buffer* buf = MALLOC(sizeof(struct v4l2_buffer));
-    buf->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    buf->memory = V4L2_MEMORY_MMAP;
-    buf->index = 0;
+	struct v4l2_buffer buf = {0};
+    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    buf.memory = V4L2_MEMORY_MMAP;
+    buf.index = 0;
 
-	if(dx_camera_query_buf(fd, buf))
+	if(dx_camera_query_buf(fd, &buf))
 		return 1;
 
-	if(dx_camera_queue_buf(fd, buf))
+	CONSOLE("Query Buffer Size : %d\n", buf.length);
+
+	char fourcc[5];
+	int width = 0;
+	int height = 0;
+
+	if(dx_camera_get_fmt(fd, fourcc, &width, &height)) {
+		ERRORNO("Get Format ..");
 		return 1;
+	}
+
+	int type = dx_video_yuv_get_type(fourcc);
+	if(type == -1) {
+		ERROR("Unknown YUV Type : [%s]", fourcc);
+		return 1;
+	}
+	dx_video_yuv_t* yuv = dx_video_yuv_create(type, width, height);
+	dx_video_yuv_alloc_buffer(yuv, buf.length, fd, buf.m.offset);
+
+	dx_camera_queue_buf(fd, &buf);
 
 	if(dx_camera_stream_on(fd))
 		return 1;
@@ -190,7 +246,7 @@ int dx_camera_capture_start(int fd, dx_camera_event_handler handler) {
 	pcontext->readable_handler = dx_camera_readable_handler;
 	pcontext->writable_handler = NULL;
 	pcontext->error_handler = NULL;
-	pcontext->pdata = buf;
+	pcontext->pdata = yuv;
 	pcontext->on_destroy = dx_camera_destroy_handler;
 
 	pcontext->user_handler = handler;
@@ -201,11 +257,12 @@ int dx_camera_capture_start(int fd, dx_camera_event_handler handler) {
 }
 
 int dx_camera_capture_stop(int fd) {
+	dx_camera_stream_off(fd);
 	return dx_camera_close(fd);
 }
 
-int dx_camera_destroy_handler(void* pbuf) {
-	FREE(pbuf);
+int dx_camera_destroy_handler(void* yuv) {
+	dx_video_yuv_destroy(yuv);
 	return 0;
 }
 
@@ -218,7 +275,16 @@ int dx_camera_readable_handler(dx_event_context_t* pcontext) {
 	// 4. dx_del_event_context if user_handler returns the value other than 0
 	//    - streamoff
 
-	dx_camera_dqueue_buf(pcontext->fd, pcontext->pdata);
+	struct v4l2_buffer buf = {0};
+    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    buf.memory = V4L2_MEMORY_MMAP;
+
+	if(dx_camera_dqueue_buf(pcontext->fd, &buf)) {
+		if(!CHECK_FILE_CLOSED(pcontext->fd))
+			dx_camera_stream_off(pcontext->fd);
+		dx_del_event_context(pcontext);
+		return 0;
+	}
 
 	if(((dx_camera_event_handler) pcontext->user_handler)(pcontext, pcontext->pdata)) {
 		if(!CHECK_FILE_CLOSED(pcontext->fd))
@@ -227,7 +293,7 @@ int dx_camera_readable_handler(dx_event_context_t* pcontext) {
 		return 0;
 	}
 
-	dx_camera_queue_buf(pcontext->fd, pcontext->pdata);
+	dx_camera_queue_buf(pcontext->fd, &buf);
 
 	return 0;
 }

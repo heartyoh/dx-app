@@ -17,7 +17,7 @@ int dx_video_yuv_convert(dx_video_yuv_t* src, dx_video_yuv_t* dst) {
 	uint8_t Y = 0, U = 0, V = 0;
 
 	for(i = 0;i < src->height;i++) {
-		for(j = 0;j < (src->width + 7) / 8;j++) {
+		for(j = 0;j < src->width;j++) {
 			if(!(i % src->spec->sample_period_y_v) && !(j % src->spec->sample_period_y_h)) {
 				Y = *SY;
 				SY += src->spec->stride_y;
@@ -84,7 +84,7 @@ int dx_video_yuv_merge(dx_video_yuv_t** srcs, dx_video_yuv_t* dst, int rows, int
 	for(r = 0;r < rows;r++) {
 		for(i = 0;i < height;i++) {
 			for(c = 0;c < cols;c++) {
-				for(j = 0;j < width / 8;j++) {
+				for(j = 0;j < width;j++) {
 
 					// i : source row, j : source column
 					// di : dest row, dj : dest column

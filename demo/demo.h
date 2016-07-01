@@ -70,9 +70,9 @@ void demo_camera_query_cap(char* cmdline);
 void demo_camera_enum_fmt(char* cmdline);
 void demo_camera_set_fmt(char* cmdline);
 void demo_camera_capture_start(char* cmdline);
-void demo_camera_capture_stop(char* cmdline);
 void demo_camera_streaming_start(char* cmdline);
-void demo_camera_streaming_stop(char* cmdline);
+void demo_camera_x264_start(char* cmdline);
+void demo_camera_stop(char* cmdline);
 void demo_camera_close(char* cmdline);
 
 int demo_server_event_handler(dx_event_context_t* pcontext, dx_packet_t* packet);

@@ -5,7 +5,6 @@
 #include <linux/usb/video.h>
 
 int camera_fd = -1;
-struct v4l2_buffer v4l2_buffer = {0};
 
 void demo_camera_open(char* cmdline) {
 
@@ -88,10 +87,19 @@ void demo_camera_set_fmt(char* cmdline) {
 	CONSOLE("Camera Pixel Format Set : %.*s, %d, %d\n", 4, fourcc, width, height);
 }
 
-int demo_camera_capture_user_handler(dx_event_context_t* pcontext, void* buf) {
-	struct v4l2_buffer* buffer = (struct v4l2_buffer*)buf;
+int demo_camera_capture_user_handler(dx_event_context_t* pcontext, void* pdata) {
+	dx_video_yuv_t* yuv = (dx_video_yuv_t*)pdata;
 
-	CONSOLE("CAPTURE - BUFFER SIZE %d\n", buffer->bytesused);
+	int outfd = open("out.img", O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+	if(outfd < 0) {
+		ERRORNO("File open error");
+		return 1;
+	}
+
+	CONSOLE("Trying to write image file (size: %d)", yuv->buffer_size);
+
+	write(outfd, yuv->buffer, yuv->buffer_size);
+	close(outfd);
 
 	return 1; /* return 1 immediately, after save image file */
 }
@@ -104,17 +112,17 @@ void demo_camera_capture_start(char* cmdline) {
 	dx_camera_capture_start(camera_fd, demo_camera_capture_user_handler);
 }
 
-void demo_camera_capture_stop(char* cmdline) {
+void demo_camera_stop(char* cmdline) {
 	if(demo_camera_check_open())
 		return;
 
 	dx_camera_capture_stop(camera_fd);
 }
 
-int demo_camera_streaming_user_handler(dx_event_context_t* pcontext, void* buf) {
-	struct v4l2_buffer* buffer = (struct v4l2_buffer*)buf;
+int demo_camera_streaming_user_handler(dx_event_context_t* pcontext, void* pdata) {
+	dx_video_yuv_t* yuv = (dx_video_yuv_t*)pdata;
 
-	CONSOLE("STREAMING - BUFFER SIZE %d\n", buffer->bytesused);
+	CONSOLE("STREAMING - BUFFER SIZE %d\n", yuv->buffer_size);
 
 	return 0; /* run continously .. */
 }
@@ -124,11 +132,4 @@ void demo_camera_streaming_start(char* cmdline) {
 		return;
 
 	dx_camera_capture_start(camera_fd, demo_camera_streaming_user_handler);
-}
-
-void demo_camera_streaming_stop(char* cmdline) {
-	if(demo_camera_check_open())
-		return;
-
-	dx_camera_capture_stop(camera_fd);
 }

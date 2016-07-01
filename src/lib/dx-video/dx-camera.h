@@ -24,6 +24,7 @@ typedef int(*dx_camera_event_handler)(dx_event_context_t* pcontext, void* pdata)
 int dx_camera_open(char* dev_name, int* fd);
 int dx_camera_close(int fd);
 int dx_camera_set_fmt(int fd, char* fourcc, int* width, int* height);
+int dx_camera_get_fmt(int fd, char* fourcc, int* width, int* height);
 int dx_camera_req_bufs(int fd, int count);
 int dx_camera_capture_image(int fd, uint8_t* buffer);
 int dx_camera_stream_on(int fd); 
