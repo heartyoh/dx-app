@@ -1,0 +1,4 @@
+
+int dx-gles-init() {
+	
+}
