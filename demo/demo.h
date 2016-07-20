@@ -75,6 +75,12 @@ void demo_camera_x264_start(char* cmdline);
 void demo_camera_stop(char* cmdline);
 void demo_camera_close(char* cmdline);
 
+int demo_4ch_open(char* cmdline);
+int demo_4ch_capture_start(char* cmdline);
+int demo_4ch_x264_start(char* cmdline);
+void demo_4ch_stop(char* cmdline);
+int demo_4ch_close(char* cmdline);
+
 int demo_server_event_handler(dx_event_context_t* pcontext, dx_packet_t* packet);
 int demo_client_event_handler(dx_event_context_t* pcontext, dx_packet_t* packet);
 

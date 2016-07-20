@@ -21,6 +21,8 @@ bin_PROGRAMS = dx-demo
 dx_demo_SOURCES = main.c \
                   demo_console_menu_camera.c \
                   demo_console_menu_camera_x264.c \
+                  demo_console_menu_4ch.c \
+                  demo_console_menu_4ch_x264.c \
                   demo_console_menu_client.c \
                   demo_console_menu_movie.c \
                   demo_console_menu_server.c \
