@@ -8,13 +8,18 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-int camera_fds[] = {-1, -1};
+#define CAMERA_COUNT 4
+#define ROWS 2
+#define COLUMNS 2
 
-dx_video_yuv_t* yuyv_2ch[] = {NULL, NULL};
+int camera_fds[] = {-1, -1, -1, -1};
+
+dx_video_yuv_t* yuyv_2ch[] = {NULL, NULL, NULL, NULL};
 dx_video_yuv_t* i420_2ch = NULL;
 
 int width_2ch = 640;
 int height_2ch = 480;
+int framerate_2ch = 15;
 
 int i420_2ch_fd = -1;
 
@@ -40,7 +45,7 @@ int demo_2ch_close_camera(int* camera_fd) {
 }
 
 void demo_2ch_close(char* cmdline) {
-	for(int i = 0;i < 2;i++) {
+	for(int i = 0;i < CAMERA_COUNT;i++) {
 		demo_2ch_close_camera(&camera_fds[i]);
 	}
 	return;
@@ -52,7 +57,7 @@ void demo_2ch_open(char* cmdline) {
 
 	char path[20];
 
-	for(int i = 0;i < 2;i++) {
+	for(int i = 0;i < CAMERA_COUNT;i++) {
 		memset(path, 0x0, 20);
 		sprintf(path, "/dev/video%d", i);
 		if(demo_2ch_open_camera(path, camera_fds + i)) {
@@ -62,7 +67,7 @@ void demo_2ch_open(char* cmdline) {
 }
 
 int demo_2ch_check_open() {
-	for(int i = 0;i < 2;i++) {
+	for(int i = 0;i < CAMERA_COUNT;i++) {
 		if(camera_fds[i] == -1) {
 			ERROR("Camera %d Open Please.", i);
 			return -1;
@@ -79,7 +84,7 @@ void demo_2ch_stop(char* cmdline) {
 		demo_2ch_stream_schedule = NULL;
 	}
 
-	for(int i = 0;i < 2;i++) {
+	for(int i = 0;i < CAMERA_COUNT;i++) {
 		if(camera_fds[i] != -1) {
 			dx_camera_capture_stop(camera_fds[i]);
 		}
@@ -91,16 +96,13 @@ clock_t _start_time = 0;
 
 int demo_2ch_schedule_callback(void* pdata) {
 
-	//dx_video_yuv_t* yuyv = pdata;
-
 	if(++_xxxx % 10 == 0) {
-		CONSOLE("2CH Handler [%d : %d]...\n", _xxxx, _xxxx / ((clock() - _start_time) / CLOCKS_PER_SEC));
-		CONSOLE("[%ld : %ld : %d : %d]...\n", _start_time, clock(), CLOCKS_PER_SEC, clock() - _start_time);
+		CONSOLE("2CH Handler [%d : %d]\n", _xxxx, _xxxx / ((clock() - _start_time) / CLOCKS_PER_SEC));
 	}
 
-	dx_video_yuv_merge(yuyv_2ch, i420_2ch, 1, 2);
+	dx_video_yuv_merge(yuyv_2ch, i420_2ch, ROWS, COLUMNS);
 
-	//write(i420_2ch_fd, i420_2ch->buffer, i420_2ch->buffer_size);
+	write(i420_2ch_fd, i420_2ch->buffer, i420_2ch->buffer_size);
 
 	//CONSOLE("Done.\n");
 	return 0;
@@ -111,11 +113,13 @@ int demo_2ch_handler(dx_event_context_t* pcontext, void* pdata) {
 	/*
 	if(pcontext->fd == camera_fds[1]) {
 		CONSOLE("2CH Handler [%d]...\n", _xxxx++);
-		dx_video_yuv_merge(yuyv_2ch, i420_2ch, 1, 2);
+		dx_video_yuv_merge(yuyv_2ch, i420_2ch, ROWS, COLUMNS);
 		//write(i420_2ch_fd, i420_2ch->buffer, i420_2ch->buffer_size);
 		//CONSOLE("Done.\n");
 	}
 	*/
+
+	CONSOLE("-----%d-----\n", pcontext->fd);
 		
 	return 0;
 }
@@ -131,12 +135,15 @@ void demo_2ch_start(char* cmdline) {
 		return;
 	}
 
-	i420_2ch = dx_video_yuv_create(DX_YUV_TYPE_I420, width_2ch * 2, height_2ch * 1);
+	i420_2ch = dx_video_yuv_create(DX_YUV_TYPE_I420, width_2ch * COLUMNS, height_2ch * ROWS);
 	dx_video_yuv_alloc_buffer(i420_2ch, 0, -1, 0);
 
 	CONSOLE("Start Capture from 4CH Cameras...");
-	for(int i = 0;i < 2;i++) {
-		dx_camera_set_fmt(camera_fds[i], "YUYV", &width_2ch, &height_2ch);
+	for(int i = 0;i < CAMERA_COUNT;i++) {
+		int width = width_2ch;
+		int height = height_2ch;
+		int framerate = framerate_2ch;
+		dx_camera_set_fmt(camera_fds[i], "YUYV", &width, &height, &framerate);
 		dx_camera_capture_start(camera_fds[i], demo_2ch_handler);
 		yuyv_2ch[i] = dx_get_event_context(camera_fds[i])->pdata;
 	}

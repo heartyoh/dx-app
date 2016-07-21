@@ -47,6 +47,21 @@ int dx_camera_enum_fmt(int dev) {
 		fmtdesc.index++;
 	}
 
+	int width = 640;
+	int height = 480;
+    	struct v4l2_frmivalenum frmival;
+    	memset(&frmival,0,sizeof(frmival));
+    	frmival.pixel_format = V4L2_PIX_FMT_YUYV;
+	frmival.width = width;
+    	frmival.height = height;
+    	while (IOCTL(dev, VIDIOC_ENUM_FRAMEINTERVALS, &frmival) == 0) {
+		if (frmival.type == V4L2_FRMIVAL_TYPE_DISCRETE) 
+       			printf("[%dx%d] %f fps\n", width, height, 1.0*frmival.discrete.denominator/frmival.discrete.numerator);
+       	 	else
+        		printf("[%dx%d] [%f,%f] fps\n", width, height, 1.0*frmival.stepwise.max.denominator/frmival.stepwise.max.numerator, 1.0*frmival.stepwise.min.denominator/frmival.stepwise.min.numerator);
+        	frmival.index++;    
+    	}
+
 	return 0;
 }
 

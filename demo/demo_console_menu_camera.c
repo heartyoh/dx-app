@@ -65,8 +65,9 @@ void demo_camera_set_fmt(char* cmdline) {
 	char* fourcc = strtok(cmdline, " \t\n\f");
 	char* str_width = strtok(NULL, " \t\n\f");
 	char* str_height = strtok(NULL, " \t\n\f");
+	char* str_framerate = strtok(NULL, " \t\n\f");
 
-	int width, height;
+	int width, height, framerate;
 
 	if(fourcc == NULL)
 		fourcc = "YUYV";
@@ -78,8 +79,12 @@ void demo_camera_set_fmt(char* cmdline) {
 		height = 480;
 	else
 		height = atoi(str_height);
+	if(str_framerate == NULL)
+		framerate = 10;
+	else
+		framerate = atoi(str_framerate);
 
-	if(dx_camera_set_fmt(camera_fd, fourcc, &width, &height)) {
+	if(dx_camera_set_fmt(camera_fd, fourcc, &width, &height, &framerate)) {
 		ERROR("SETFMT");
 		return;
 	}

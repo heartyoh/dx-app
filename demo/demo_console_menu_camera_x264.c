@@ -11,6 +11,7 @@ dx_video_yuv_t* i420 = NULL;
 
 int width = 640;
 int height = 480;
+int framerate = 30;
 
 int i420_fd = -1;
 
@@ -49,7 +50,7 @@ void demo_camera_x264_start(char* cmdline) {
 	if(demo_camera_check_open())
 		return;
 
-	dx_camera_set_fmt(camera_fd, "YUYV", &width, &height);
+	dx_camera_set_fmt(camera_fd, "YUYV", &width, &height, &framerate);
 
 	dx_camera_capture_start(camera_fd, demo_camera_x264_handler);
 }

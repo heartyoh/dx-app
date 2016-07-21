@@ -66,7 +66,7 @@ int dx_camera_close(int fd) {
 	return 0;
 }
 
-int dx_camera_set_fmt(int dev, char* fourcc, int* width, int* height) {
+int dx_camera_set_fmt(int dev, char* fourcc, int* width, int* height, int* framerate) {
 	struct v4l2_format fmt = {0};
 
 	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -80,24 +80,40 @@ int dx_camera_set_fmt(int dev, char* fourcc, int* width, int* height) {
 		return 1;
 	}
 
+	*width = fmt.fmt.pix.width;
+	*height = fmt.fmt.pix.height;
+
+	if(*framerate > 0) {
+		struct v4l2_streamparm parm;
+
+		parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		parm.parm.capture.timeperframe.numerator = 1;
+		parm.parm.capture.timeperframe.denominator = *framerate;
+		parm.parm.capture.capturemode = 0;
+		if (IOCTL(dev, VIDIOC_S_PARM, &parm) < 0) {
+		        ERROR("VIDIOC_S_PARM failed");
+		        return 1;
+		}
+		*framerate = parm.parm.capture.timeperframe.denominator;
+	}
+
 	CONSOLE("Set Camera Format:\n"
 			"  Width: %d\n"
 			"  Height: %d\n"
 			"  PixFmt: %.*s\n"
-			"  Field: %d\n",
+			"  Field: %d\n"
+			"  FrameRate: %d\n",
 			fmt.fmt.pix.width,
 			fmt.fmt.pix.height,
 			4,
 			(char*)&fmt.fmt.pix.pixelformat,
-			fmt.fmt.pix.field);
-
-	*width = fmt.fmt.pix.width;
-	*height = fmt.fmt.pix.height;
+			fmt.fmt.pix.field,
+			*framerate);
 
 	return 0;
 }
 
-int dx_camera_get_fmt(int dev, char* fourcc, int* width, int* height) {
+int dx_camera_get_fmt(int dev, char* fourcc, int* width, int* height, int* framerate) {
 	struct v4l2_format fmt = {0};
 	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
@@ -106,21 +122,32 @@ int dx_camera_get_fmt(int dev, char* fourcc, int* width, int* height) {
 		return 1;
 	}
 
-	CONSOLE("Get Camera Format:\n"
-			"  Width: %d\n"
-			"  Height: %d\n"
-			"  PixFmt: %.*s\n"
-			"  Field: %d\n",
-			fmt.fmt.pix.width,
-			fmt.fmt.pix.height,
-			4,
-			(char*)&fmt.fmt.pix.pixelformat,
-			fmt.fmt.pix.field);
-
 	memset(fourcc, 0x0, 5);
 	strncpy(fourcc, (char*)&fmt.fmt.pix.pixelformat, 4); 
 	*width = fmt.fmt.pix.width;
 	*height = fmt.fmt.pix.height;
+
+	struct v4l2_streamparm parm;
+
+	parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	if (IOCTL(dev, VIDIOC_G_PARM, &parm) < 0) {
+	        ERROR("VIDIOC_G_PARM failed");
+	        return 1;
+	}
+	*framerate = parm.parm.capture.timeperframe.denominator;
+
+	CONSOLE("Get Camera Format:\n"
+			"  Width: %d\n"
+			"  Height: %d\n"
+			"  PixFmt: %.*s\n"
+			"  Field: %d\n"
+			"  FrameRate: %d\n",
+			fmt.fmt.pix.width,
+			fmt.fmt.pix.height,
+			4,
+			(char*)&fmt.fmt.pix.pixelformat,
+			fmt.fmt.pix.field,
+			*framerate);
 
 	return 0;
 }
@@ -218,8 +245,9 @@ int dx_camera_capture_start(int fd, dx_camera_event_handler handler) {
 	char fourcc[5];
 	int width = 0;
 	int height = 0;
+	int framerate = 0;
 
-	if(dx_camera_get_fmt(fd, fourcc, &width, &height)) {
+	if(dx_camera_get_fmt(fd, fourcc, &width, &height, &framerate)) {
 		ERRORNO("Get Format ..");
 		return 1;
 	}
