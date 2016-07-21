@@ -51,7 +51,7 @@ int demo_4ch_x264_start(char* cmdline) {
 
 	CONSOLE("Start Capture from 4CH Cameras...");
 	for(int i = 0;i < 4;i++) {
-		dx_camera_set_fmt(camera_fds[i], "YUYV", &width_4ch, &height_4ch);
+		dx_camera_set_fmt(camera_fds[i], "MJPG", &width_4ch, &height_4ch);
 		dx_camera_capture_start(camera_fds[i], demo_4ch_x264_handler);
 		yuyv_4ch[i] = dx_get_event_context(camera_fds[i])->pdata;
 	}

@@ -51,11 +51,11 @@ dx_console_menu_t demo_console_menus[]  = {
 		{66, "xs-x264-start", "", "yuyv-640-480 => i420-640-480 => x264 encoding", demo_camera_x264_start},
 		{67, "stop", "", "stop capturing", demo_camera_stop},
 		{68, "close", "", "close camera", demo_camera_close},
-	{7, "4ch", "", "do something about 4-channel camera ..", NULL},
-		{70, "open", "", "open all cameras", demo_4ch_open},
-		{71, "cs-capture-start", "", "start capture 4-channel cameras", demo_4ch_x264_start},
-		{72, "stop", "", "stop capturing 4-channel cameras", demo_4ch_stop},
-		{79, "close", "", "close camera", demo_4ch_close},
+	{7, "2ch", "", "do something about 2-channel camera ..", NULL},
+		{70, "open", "", "open all cameras", demo_2ch_open},
+		{71, "start", "", "start capture 2-channel cameras", demo_2ch_start},
+		{72, "stop", "", "stop capturing 2-channel cameras", demo_2ch_stop},
+		{79, "close", "", "close camera", demo_2ch_close},
 	{0},
 };
 
